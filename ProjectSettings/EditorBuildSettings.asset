@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/lv2.unity
     guid: 95088249dbddcf14aaa5626a2194fa24
+  - enabled: 1
+    path: Assets/Scenes/Test_PLayer.unity
+    guid: dd2f7c2f9e80ffd41a4878fbb514ad25
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
