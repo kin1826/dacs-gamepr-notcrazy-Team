@@ -1,0 +1,390 @@
+PLAN PHÁT TRIỂN GAME — 2D CO-OP TRAP PLATFORMER
+
+Game tham chiếu: Level Devil
+Engine: Unity Technologies
+Target:
+
+Android trước
+iOS sau
+Singleplayer + Multiplayer (2 người)
+TƯ DUY QUAN TRỌNG NHẤT
+Làm multiplayer NGAY TỪ ĐẦU.
+
+KHÔNG:
+
+làm single xong convert multiplayer
+
+Mà:
+
+ngay map đầu đã support network
+KIẾN TRÚC TỔNG THỂ
+MainMenu
+↓
+Lobby
+↓
+Gameplay
+    ├── Player
+    ├── Trap System
+    ├── Trigger System
+    ├── Coop Mechanics
+    ├── Checkpoint
+    └── Goal
+PLAN CHIA THEO PHASE
+PHASE 1 — FOUNDATION
+(2–3 ngày)
+Mục tiêu:
+
+Có:
+
+movement
+camera
+map cơ bản
+tilemap
+chết/spawn
+1. Setup project
+Packages
+
+Cài:
+
+Netcode for GameObjects
+Unity Transport
+Relay
+Lobby
+Input System
+2. Tạo folder structure
+Assets
+├── Art
+├── Audio
+├── Materials
+├── Prefabs
+├── Scenes
+├── Scripts
+├── ScriptableObjects
+├── Tilemaps
+├── UI
+└── Resources
+3. Tạo scene structure
+Scenes
+├── MainMenu
+├── Lobby
+├── Level_01
+├── Level_02
+├── Level_03
+└── TestScene
+4. Tạo prefab structure
+Prefabs
+├── Players
+├── Traps
+├── Triggers
+├── Platforms
+├── Environment
+├── FX
+└── UI
+5. Tilemap setup
+Grid
+├── GroundTilemap
+├── DecorationTilemap
+├── TrapTilemap
+└── BackgroundTilemap
+6. Làm gameplay core
+
+Bạn đã có:
+
+movement
+jump
+
+Cần thêm:
+
+respawn
+checkpoint
+dead zone
+7. Camera
+
+Single:
+
+camera follow
+
+Multi:
+
+mỗi player có camera local riêng
+OUTPUT PHASE 1
+
+✔ player di chuyển
+✔ chết/respawn
+✔ tilemap hoạt động
+✔ scene organization ổn
+
+PHASE 2 — MULTIPLAYER CORE
+(2–3 ngày)
+Mục tiêu:
+
+2 player online vào được cùng room.
+
+1. Setup NGO
+
+Tạo:
+
+NetworkManager
+
+Add:
+
+NetworkManager
+UnityTransport
+2. Setup Relay + Lobby
+
+Flow:
+
+Create Room
+↓
+Join Code
+↓
+Join Room
+3. Làm UI
+Main Menu
+Single Player
+Multiplayer
+Quit
+Multiplayer Menu
+Create Room
+Join Room
+Input Room Code
+4. Player prefab
+
+Add:
+
+NetworkObject
+NetworkTransform
+NetworkAnimator
+5. Ownership
+
+Trong movement:
+
+if (!IsOwner) return;
+6. Spawn player
+
+NetworkManager:
+
+Player Prefab
+7. Test 2 player
+
+Test:
+
+Editor + Build
+OUTPUT PHASE 2
+
+✔ tạo room
+✔ join room
+✔ thấy nhau
+✔ movement sync
+
+PHASE 3 — TRAP SYSTEM
+(3–4 ngày)
+Mục tiêu:
+
+Hoàn thành architecture trap.
+
+TRIẾT LÝ
+Trigger → Event → Reaction
+1. Tạo interface trap
+public interface ITrap
+{
+    void Activate();
+}
+2. Tạo generic trigger
+TriggerZone
+
+Nhiệm vụ:
+
+detect player
+gọi Activate()
+3. Tạo base trap
+BaseTrap
+
+Chứa:
+
+cooldown
+delay
+activate state
+4. Làm trap type
+Trap 1 — Hidden Spike
+Spike lên từ sàn/tường
+Trap 2 — Fake Floor
+đứng lên → rung → rơi
+Trap 3 — Exit Trap
+gần cửa → troll
+Trap 4 — Delayed Trap
+delay trước khi active
+Trap 5 — Chain Trap
+trap A → trap B
+Trap 6 — Reverse Logic
+nhảy = chết
+5. Sync trap state
+
+Host:
+
+quyết định activate
+
+Client:
+
+chỉ nhận sync
+OUTPUT PHASE 3
+
+✔ trap architecture hoàn chỉnh
+✔ trap sync multiplayer
+✔ prefab reusable
+
+PHASE 4 — CO-OP MECHANICS
+(2 ngày)
+Mục tiêu:
+
+Làm mechanic 2 người phối hợp.
+
+1. Pressure Button
+A đứng nút
+↓
+B đi qua
+2. Dual Trigger
+2 người cùng đứng
+↓
+door open
+3. Sacrifice Mechanic
+A kích trap
+↓
+B chạy qua
+4. Troll Mechanic
+A trigger
+↓
+B chết
+5. Asymmetric Mechanic
+A thấy trap
+B không thấy
+OUTPUT PHASE 4
+
+✔ co-op gameplay hoạt động
+✔ teamwork xuất hiện
+✔ gameplay vui hơn singleplayer
+
+PHASE 5 — LEVEL DESIGN
+(3–4 ngày)
+Mục tiêu:
+
+3–4 level demo hoàn chỉnh.
+
+LEVEL STRUCTURE
+Level 1
+Teach mechanic
+Level 2
+mix trap
+Level 3
+reverse logic
+Level 4
+heavy co-op + troll
+CÔNG THỨC THIẾT KẾ
+Teach
+↓
+Trust
+↓
+Betray
+↓
+Twist
+LEVEL DESIGN RULES
+KHÔNG:
+spam spike
+NÊN:
+đánh lừa expectation
+OUTPUT PHASE 5
+
+✔ playable demo
+✔ 3–4 map
+✔ gameplay loop hoàn chỉnh
+
+PHASE 6 — POLISH
+(2 ngày)
+1. FX
+camera shake
+spike sound
+platform crumble
+2. UI polish
+room code đẹp
+loading
+retry
+3. Audio
+death sound
+fake floor crack
+trap trigger
+4. Multiplayer test
+
+Test:
+
+disconnect
+reconnect
+room join fail
+latency nhẹ
+5. Android build
+
+Build:
+
+APK
+OUTPUT PHASE 6
+
+✔ demo ổn định
+✔ Android playable
+✔ multiplayer hoạt động
+
+HIERARCHY CHUẨN CHO LEVEL
+Level
+├── Tilemaps
+├── Platforms
+├── Traps
+├── Triggers
+├── SpawnPoints
+├── Checkpoints
+├── Goal
+├── Players
+└── Managers
+MANAGERS NÊN CÓ
+Managers
+├── GameManager
+├── TrapManager
+├── NetworkManager
+├── AudioManager
+└── UIManager
+SCRIPT QUAN TRỌNG
+Script	Chức năng
+PlayerController	movement
+TriggerZone	detect trigger
+BaseTrap	logic trap
+TrapActivator	activate trap
+CoopButton	button co-op
+DoorController	open/close
+RespawnManager	respawn
+NetworkGameManager	multiplayer state
+THỨ TỰ ƯU TIÊN
+QUAN TRỌNG NHẤT
+1
+movement sync
+2
+trap sync
+3
+co-op interaction
+4
+level design
+ĐỪNG LÀM SỚM
+
+❌ voice chat
+❌ account system
+❌ inventory
+❌ AI phức tạp
+❌ online matchmaking lớn
+❌ cosmetic system
+
+KẾT QUẢ MONG MUỐN
+
+Sau project này bạn sẽ có:
+
+✔ game multiplayer thật
+✔ room code online
+✔ NGO experience
+✔ trap architecture reusable
+✔ mobile multiplayer demo
+✔ portfolio khá mạnh cho Unity multiplayer

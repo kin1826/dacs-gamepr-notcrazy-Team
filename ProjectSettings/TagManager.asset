@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Platform
   - Platform_fl
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -14,10 +15,10 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
-  - 
-  - 
+  - Backgound
+  - Trap
+  - 'Decoration '
+  - UI
   - 
   - 
   - 
@@ -43,14 +44,23 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Player
-    uniqueID: 3642663409
+  - name: UI
+    uniqueID: 637353373
     locked: 0
   - name: Backgound
     uniqueID: 231229687
     locked: 0
-  - name: UI
-    uniqueID: 637353373
+  - name: Player
+    uniqueID: 3642663409
+    locked: 0
+  - name: Ground
+    uniqueID: 2243400329
+    locked: 0
+  - name: Trap
+    uniqueID: 1357644585
+    locked: 0
+  - name: 'Decoration '
+    uniqueID: 2437498669
     locked: 0
   m_RenderingLayers:
   - Default
