@@ -27,12 +27,18 @@ public class PlayerMovement : NetworkBehaviour
     // Input System gọi
     public void OnMove(InputValue value)
     {
+        if (!IsOwner) return;
+
+
         moveInput = value.Get<Vector2>();
     }
     
     // 🦘 NHẢY
     public void OnJump(InputValue value)
     {
+        if (!IsOwner) return;
+
+
         if (value.isPressed && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -76,6 +82,8 @@ public class PlayerMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
 
         if (rb.linearVelocity.y < 0)
