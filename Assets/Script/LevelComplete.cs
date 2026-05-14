@@ -1,6 +1,12 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Level completion portal that moves down and loads next scene.
+/// Uses network-synchronized scene loading for multiplayer.
+/// Host makes the decision to load next scene for all clients.
+/// </summary>
 public class LevelComplete : MonoBehaviour
 {
     public float slideSpeed = 3f;
@@ -15,20 +21,35 @@ public class LevelComplete : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsConnectedClient &&
+                !NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
+
             activated = true;
             player = collision.transform;
 
-            // tắt điều khiển player
+            // Disable player controls
             Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            rb.linearVelocity = Vector2.zero;
-            rb.simulated = false;
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsConnectedClient)
+                {
+                    rb.simulated = false;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Player has no Rigidbody2D component!");
+            }
 
-            // cho player dính vào cổng
-            player.SetParent(transform);
-            // giữ player luôn nằm chính giữa cổng theo chiều X
-            player.localPosition = new Vector3(0f, player.localPosition.y, player.localPosition.z);
+            // Keep player centered on X axis
+            player.position = new Vector3(transform.position.x, player.position.y, player.position.z);
 
-            // bắt đầu coroutine
+            // Start animation
             StartCoroutine(FinishLevel());
         }
     }
@@ -39,18 +60,34 @@ public class LevelComplete : MonoBehaviour
 
         while (timer < delayBeforeLoad)
         {
-            // trượt xuống
+            // Slide down
             transform.position += Vector3.down * slideSpeed * Time.deltaTime;
 
-            // nếu player đã gắn cổng thì ép về giữa theo X mỗi frame
+            // Keep player centered on X axis without re-parenting NetworkObjects.
             if (player != null)
-                player.localPosition = new Vector3(0f, player.localPosition.y, player.localPosition.z);
+                player.position = new Vector3(transform.position.x, player.position.y, player.position.z);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
-        // load màn tiếp theo
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        // Load next scene - use network-synchronized loading if multiplayer
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient)
+        {
+            Debug.Log("Loading next scene via network...");
+            // Only host initiates scene load to prevent conflicts
+            if (NetworkManager.Singleton.IsHost)
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene(
+                    "Level_" + (int.Parse(SceneManager.GetActiveScene().name.Replace("Level_", "")) + 1).ToString("D2"),
+                    LoadSceneMode.Single
+                );
+            }
+        }
+        else
+        {
+            // Single player - load directly
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
     }
 }
