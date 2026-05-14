@@ -2,16 +2,24 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Netcode;
 
+/// <summary>
+/// Main manager for UI flow and scene management.
+/// Handles single-player vs multiplayer routing and scene loading.
+/// Ensures network-synchronized gameplay for multiplayer.
+/// </summary>
 public class MainManager : MonoBehaviour
 {
+    public static MainManager Instance { get; private set; }
+
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject multiplayerPanel;
     public GameObject dinoSelectPanel;
 
     [Header("Scene")]
-    public string gameplaySceneName = "Level_1";
+    public string gameplaySceneName = "Level_01";
 
     [Header("Dino Sprites")]
     public Sprite[] dinoSprites;
@@ -32,8 +40,23 @@ public class MainManager : MonoBehaviour
     public TMP_InputField roomCodeInput;
     public TMP_InputField codeDisplayInput;
 
+    private void Awake()
+    {
+        // Singleton pattern
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("Duplicate MainManager found! Destroying this instance.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     private void Start()
     {
+        NetworkConfig.EnsureInstance();
+        ValidateReferences();
+
         createCodeButton.interactable = false;
         joinRoomButton.interactable = true;
         playButton.interactable = false;
@@ -42,9 +65,62 @@ public class MainManager : MonoBehaviour
         rightDinoImage.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Validates all required UI references are assigned.
+    /// </summary>
+    private void ValidateReferences()
+    {
+        if (mainPanel == null) Debug.LogError("MainManager: mainPanel not assigned!");
+        if (multiplayerPanel == null) Debug.LogError("MainManager: multiplayerPanel not assigned!");
+        if (dinoSelectPanel == null) Debug.LogError("MainManager: dinoSelectPanel not assigned!");
+        if (dinoSprites == null || dinoSprites.Length == 0) Debug.LogError("MainManager: dinoSprites not assigned!");
+        if (leftDinoImage == null) Debug.LogError("MainManager: leftDinoImage not assigned!");
+        if (rightDinoImage == null) Debug.LogError("MainManager: rightDinoImage not assigned!");
+        if (createCodeButton == null) Debug.LogError("MainManager: createCodeButton not assigned!");
+        if (joinRoomButton == null) Debug.LogError("MainManager: joinRoomButton not assigned!");
+        if (playButton == null) Debug.LogError("MainManager: playButton not assigned!");
+        if (roomCodeInput == null) Debug.LogError("MainManager: roomCodeInput not assigned!");
+        if (codeDisplayInput == null) Debug.LogError("MainManager: codeDisplayInput not assigned!");
+    }
+
+    private void Update()
+    {
+        // Only update UI if multiplayer and LobbyManager is available
+        if (GameData.IsMultiplayer && LobbyManager.Instance != null)
+        {
+            UpdateRoomUI();
+        }
+    }
+
     public void StartGame()
     {
-        SceneManager.LoadScene(gameplaySceneName);
+        if (string.IsNullOrEmpty(gameplaySceneName))
+        {
+            Debug.LogError("gameplaySceneName not set!");
+            return;
+        }
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient)
+        {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                Debug.LogWarning("Only the host can start the multiplayer game.");
+                return;
+            }
+
+            // Multiplayer - use network-synchronized loading
+            Debug.Log("Starting multiplayer game via network...");
+            NetworkManager.Singleton.SceneManager.LoadScene(
+                gameplaySceneName,
+                LoadSceneMode.Single
+            );
+        }
+        else
+        {
+            // Single player
+            Debug.Log("Starting single player game...");
+            SceneManager.LoadScene(gameplaySceneName);
+        }
     }
 
     // =========================
@@ -72,27 +148,37 @@ public class MainManager : MonoBehaviour
     // =========================
     // CREATE ROOM
     // =========================
-    public void CreateRoom()
+    public async void CreateRoom()
     {
+        NetworkConfig networkConfig = NetworkConfig.EnsureInstance();
+        if (networkConfig == null)
+        {
+            Debug.LogError("NetworkConfig not found!");
+            return;
+        }
+
         GameData.IsHost = true;
 
-        dinoSelectPanel.SetActive(true);
-    }
-
-    // =========================
-    // JOIN ROOM
-    // =========================
-    // public void JoinRoom()
-    // {
-    //     GameData.IsHost = false;
-
-    //     multiplayerPanel.SetActive(false);
-    //     dinoSelectPanel.SetActive(true);
-    // }
-
-    public void OpenDinoSelect()
-    {
-        dinoSelectPanel.SetActive(true);
+        try
+        {
+            // Use relay for online multiplayer
+            string relayCode = await networkConfig.CreateRelay();
+            if (relayCode != null)
+            {
+                RoomData.RoomCode = relayCode;
+                if (codeDisplayInput != null)
+                {
+                    codeDisplayInput.text = relayCode;
+                }
+                Debug.Log($"Share this Relay join code with the client: {relayCode}");
+                dinoSelectPanel.SetActive(true);
+                Debug.Log($"Room created with relay code: {relayCode}");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to create room: {ex.Message}");
+        }
     }
 
     // =========================
@@ -100,48 +186,64 @@ public class MainManager : MonoBehaviour
     // =========================
     public void SelectDino(int index)
     {
+        // Validate dino index
+        if (index < 0 || index >= dinoSprites.Length)
+        {
+            Debug.LogError($"Invalid dino index: {index}");
+            return;
+        }
+
         // SINGLE PLAYER
         if (!GameData.IsMultiplayer)
         {
             GameData.SelectedDino = index;
-
-            SceneManager.LoadScene(gameplaySceneName);
-
+            PlayerSkinManager.LocalPlayer?.SetSkin(index);
+            Debug.Log($"Single player selected dino: {index}");
+            StartGame();
             return;
         }
 
         // MULTIPLAYER HOST
         if (GameData.IsHost)
         {
-            RoomData.HostDino = index;
+            GameData.SelectedDino = index;
+            PlayerSkinManager.LocalPlayer?.SetSkin(index);
 
+            if (LobbyManager.Instance == null)
+            {
+                Debug.LogError("LobbyManager not found!");
+                return;
+            }
+
+            LobbyManager.Instance.SetHostDinoRpc(index);
             leftDinoImage.sprite = dinoSprites[index];
             leftDinoImage.gameObject.SetActive(true);
-
             dinoSelectPanel.SetActive(false);
-
             createCodeButton.interactable = true;
-
-            Debug.Log("HOST SELECT DINO");
+            playButton.interactable = false;
+            Debug.Log($"Host selected dino: {index}");
         }
         else
         {
             // MULTIPLAYER CLIENT
-            RoomData.ClientDino = index;
+            GameData.SelectedDino = index;
+            PlayerSkinManager.LocalPlayer?.SetSkin(index);
 
+            if (LobbyManager.Instance == null)
+            {
+                Debug.LogError("LobbyManager not found!");
+                return;
+            }
+
+            LobbyManager.Instance.SetClientDinoRpc(index);
             rightDinoImage.sprite = dinoSprites[index];
             rightDinoImage.gameObject.SetActive(true);
-
             dinoSelectPanel.SetActive(false);
-
-            playButton.interactable = true;
-
-            Debug.Log("CLIENT SELECT DINO");
-
+            playButton.interactable = false;
+            Debug.Log($"Client selected dino: {index}");
             UpdateRoomUI();
         }
     }
-
     // =========================
     // BACK BUTTON
     // =========================
@@ -199,73 +301,128 @@ public class MainManager : MonoBehaviour
     {
         Debug.Log("QUIT GAME");
 
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #else
         Application.Quit();
+        #endif
     }
 
+    /// <summary>
+    /// Creates room code via Unity Relay service.
+    /// Called automatically when creating room - no manual code generation needed.
+    /// </summary>
     public void CreateRoomCode()
     {
-        RoomData.RoomCode = Random.Range(1000, 9999).ToString();
+        string currentRelayCode = NetworkConfig.Instance != null ? NetworkConfig.Instance.relayCode : RoomData.RoomCode;
 
-        codeDisplayInput.text = RoomData.RoomCode;
+        if (string.IsNullOrWhiteSpace(currentRelayCode))
+        {
+            Debug.LogWarning("No Relay room exists yet. Press Create Room first.");
+            return;
+        }
 
-        playButton.interactable = false;
+        if (codeDisplayInput != null)
+        {
+            codeDisplayInput.text = currentRelayCode;
+        }
 
-        Debug.Log("ROOM CODE: " + RoomData.RoomCode);
+        Debug.Log($"Current Relay join code: {currentRelayCode}");
     }
 
-    public void JoinRoom()
+    /// <summary>
+    /// Join room using relay join code.
+    /// Validates code with Unity Relay service.
+    /// </summary>
+    public async void JoinRoom()
     {
-        string inputCode = roomCodeInput.text;
+        if (roomCodeInput == null)
+        {
+            Debug.LogError("roomCodeInput not assigned!");
+            return;
+        }
 
+        NetworkConfig networkConfig = NetworkConfig.EnsureInstance();
+        if (networkConfig == null)
+        {
+            Debug.LogError("NetworkConfig not found!");
+            return;
+        }
+
+        string inputCode = NetworkConfig.NormalizeJoinCode(roomCodeInput.text);
+
+        if (string.IsNullOrEmpty(inputCode))
+        {
+            Debug.LogWarning("Please enter a room code");
+            return;
+        }
+
+        roomCodeInput.text = inputCode;
         GameData.IsHost = false;
 
-        dinoSelectPanel.SetActive(true);
-
-        DisableHostDino();
-
-        Debug.Log("JOIN SUCCESS");
-
-        // if (inputCode == RoomData.RoomCode)
-        // {
-        //     GameData.IsHost = false;
-
-        //     dinoSelectPanel.SetActive(true);
-
-        //     DisableHostDino();
-
-        //     Debug.Log("JOIN SUCCESS");
-        // }
-        // else
-        // {
-        //     Debug.Log("WRONG CODE");
-        // }
+        try
+        {
+            bool success = await networkConfig.JoinRelay(inputCode);
+            if (success)
+            {
+                dinoSelectPanel.SetActive(true);
+                DisableHostDino();
+                Debug.Log("Successfully joined relay room!");
+            }
+            else
+            {
+                Debug.LogWarning("Failed to join relay room - invalid code or connection issue");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to join room: {ex.Message}");
+        }
     }
 
+    /// <summary>
+    /// Disable the dino button selected by host.
+    /// </summary>
     private void DisableHostDino()
     {
-        int hostIndex = RoomData.HostDino;
+        if (LobbyManager.Instance == null)
+        {
+            Debug.LogWarning("LobbyManager not available yet");
+            return;
+        }
 
-        dinoButtons[hostIndex].interactable = false;
+        int hostIndex = LobbyManager.Instance.HostDino.Value;
+
+        if (hostIndex >= 0 && hostIndex < dinoButtons.Length)
+        {
+            dinoButtons[hostIndex].interactable = false;
+        }
     }
 
+    /// <summary>
+    /// Updates multiplayer room UI with host/client dino selections.
+    /// Called every frame while in multiplayer dino select screen.
+    /// </summary>
     public void UpdateRoomUI()
     {
-        if (RoomData.HostDino != -1)
-        {
-            leftDinoImage.sprite =
-                dinoSprites[RoomData.HostDino];
+        if (LobbyManager.Instance == null)
+            return;
 
+        int hostDino = LobbyManager.Instance.HostDino.Value;
+        int clientDino = LobbyManager.Instance.ClientDino.Value;
+
+        if (hostDino != -1 && hostDino < dinoSprites.Length)
+        {
+            leftDinoImage.sprite = dinoSprites[hostDino];
             leftDinoImage.gameObject.SetActive(true);
         }
 
-        if (RoomData.ClientDino != -1)
+        if (clientDino != -1 && clientDino < dinoSprites.Length)
         {
-            rightDinoImage.sprite =
-                dinoSprites[RoomData.ClientDino];
-
+            rightDinoImage.sprite = dinoSprites[clientDino];
             rightDinoImage.gameObject.SetActive(true);
 
-            playButton.interactable = true;
+            playButton.interactable = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
         }
     }
 }

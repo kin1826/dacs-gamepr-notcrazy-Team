@@ -1,0 +1,257 @@
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Linq;
+using System.Threading.Tasks;
+
+/// <summary>
+/// Centralized network configuration for relay and multiplayer settings.
+/// Handles Unity Relay setup, authentication, and connection management.
+/// </summary>
+public class NetworkConfig : MonoBehaviour
+{
+    public static NetworkConfig Instance { get; private set; }
+
+    [Header("Relay Settings")]
+    public bool useRelay = true;
+    public int maxPlayers = 2;
+    public string relayCode = "";
+
+    [Header("Network Settings")]
+    public string joinCode = "";
+    public bool isHost = false;
+
+    private UnityTransport transport;
+    private Task initializeTask;
+
+    public static NetworkConfig EnsureInstance()
+    {
+        if (Instance != null)
+        {
+            return Instance;
+        }
+
+        NetworkManager networkManager = NetworkManager.Singleton != null
+            ? NetworkManager.Singleton
+            : Object.FindFirstObjectByType<NetworkManager>();
+
+        if (networkManager == null)
+        {
+            Debug.LogError("NetworkManager not found!");
+            return null;
+        }
+
+        NetworkConfig config = networkManager.GetComponent<NetworkConfig>();
+        if (config == null)
+        {
+            config = networkManager.gameObject.AddComponent<NetworkConfig>();
+        }
+
+        return config;
+    }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        transport = GetComponent<UnityTransport>();
+        if (transport == null)
+        {
+            transport = gameObject.AddComponent<UnityTransport>();
+            Debug.Log("Added UnityTransport component to NetworkManager");
+        }
+
+        NetworkManager networkManager = GetComponent<NetworkManager>();
+        if (networkManager != null && networkManager.NetworkConfig.NetworkTransport == null)
+        {
+            networkManager.NetworkConfig.NetworkTransport = transport;
+        }
+    }
+
+    private async void Start()
+    {
+        await EnsureUnityServicesInitialized();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            Instance = null;
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        NetworkManager[] networkManagers = Object.FindObjectsByType<NetworkManager>(FindObjectsSortMode.None);
+        foreach (NetworkManager networkManager in networkManagers)
+        {
+            if (networkManager.gameObject != gameObject)
+            {
+                Debug.LogWarning($"Destroying duplicate NetworkManager in scene '{scene.name}'.");
+                Destroy(networkManager.gameObject);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Initialize Unity Services and authenticate anonymously.
+    /// </summary>
+    private async Task InitializeUnityServices()
+    {
+        try
+        {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                await UnityServices.InitializeAsync();
+            }
+
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+
+            Debug.Log("Unity Services initialized and authenticated!");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to initialize Unity Services: {e.Message}");
+        }
+    }
+
+    private Task EnsureUnityServicesInitialized()
+    {
+        initializeTask ??= InitializeUnityServices();
+        return initializeTask;
+    }
+
+    /// <summary>
+    /// Create a relay allocation for hosting.
+    /// </summary>
+    public async Task<string> CreateRelay()
+    {
+        try
+        {
+            await EnsureUnityServicesInitialized();
+
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Mathf.Max(1, maxPlayers - 1));
+            relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+            transport.SetHostRelayData(
+                allocation.RelayServer.IpV4,
+                (ushort)allocation.RelayServer.Port,
+                allocation.AllocationIdBytes,
+                allocation.Key,
+                allocation.ConnectionData
+            );
+
+            NetworkManager.Singleton.StartHost();
+            isHost = true;
+
+            Debug.Log($"Relay created! Join code: {relayCode}");
+            return relayCode;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to create relay: {e.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Join a relay using join code.
+    /// </summary>
+    public async Task<bool> JoinRelay(string joinCode)
+    {
+        try
+        {
+            await EnsureUnityServicesInitialized();
+
+            string normalizedJoinCode = NormalizeJoinCode(joinCode);
+            Debug.Log($"Joining Relay with code: {normalizedJoinCode}");
+
+            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(normalizedJoinCode);
+
+            transport.SetClientRelayData(
+                joinAllocation.RelayServer.IpV4,
+                (ushort)joinAllocation.RelayServer.Port,
+                joinAllocation.AllocationIdBytes,
+                joinAllocation.Key,
+                joinAllocation.ConnectionData,
+                joinAllocation.HostConnectionData
+            );
+
+            NetworkManager.Singleton.StartClient();
+            isHost = false;
+
+            Debug.Log("Joined relay successfully!");
+            return true;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to join relay: {e.Message}");
+            return false;
+        }
+    }
+
+    public static string NormalizeJoinCode(string code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            return "";
+        }
+
+        char[] allowedChars = code
+            .Trim()
+            .ToUpperInvariant()
+            .Where(char.IsLetterOrDigit)
+            .ToArray();
+
+        return new string(allowedChars);
+    }
+
+    /// <summary>
+    /// Start hosting without relay (direct connection).
+    /// </summary>
+    public void StartHostDirect()
+    {
+        NetworkManager.Singleton.StartHost();
+        isHost = true;
+        Debug.Log("Started hosting directly");
+    }
+
+    /// <summary>
+    /// Start client without relay (direct connection).
+    /// </summary>
+    public void StartClientDirect()
+    {
+        NetworkManager.Singleton.StartClient();
+        isHost = false;
+        Debug.Log("Started client directly");
+    }
+
+    /// <summary>
+    /// Shutdown network connection.
+    /// </summary>
+    public void Shutdown()
+    {
+        NetworkManager.Singleton.Shutdown();
+        isHost = false;
+        relayCode = "";
+        joinCode = "";
+        Debug.Log("Network shutdown");
+    }
+}

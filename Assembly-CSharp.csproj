@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Script\PlayerSkinManager.cs" />
+    <Compile Include="Assets\Script\core\NetworkErrorHandler.cs" />
     <Compile Include="Assets\Script\TriggerZone.cs" />
     <Compile Include="Assets\Script\core\GameData.cs" />
     <Compile Include="Assets\Script\NetworkUI.cs" />
@@ -57,11 +58,15 @@
     <Compile Include="Assets\Script\manager\MainManager.cs" />
     <Compile Include="Assets\Script\KillZoneReload.cs" />
     <Compile Include="Assets\Script\PlatformSequence.cs" />
+    <Compile Include="Assets\Script\LobbyManager.cs" />
     <Compile Include="Assets\Script\LevelComplete.cs" />
     <Compile Include="Assets\Script\core\DinoSelectButton.cs" />
+    <Compile Include="Assets\Script\NetworkConfig.cs" />
+    <Compile Include="Assets\Script\NetworkSetup.cs" />
     <Compile Include="Assets\Script\utils\ColorConfig.cs" />
     <Compile Include="Assets\Script\core\RoomData.cs" />
     <Compile Include="Assets\Script\PlayerMovement.cs" />
+    <Compile Include="Assets\Script\TestScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
