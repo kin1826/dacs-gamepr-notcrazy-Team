@@ -62,9 +62,9 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner) return;
         if (NetworkManager.Singleton == null) return;
 
-        if (value.isPressed && isGrounded)
+        if (value.isPressed && isGrounded && rb != null)
         {
-            SubmitJumpServerRpc();
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
     }
 
@@ -72,15 +72,6 @@ public class PlayerMovement : NetworkBehaviour
     private void SubmitMovementServerRpc(Vector2 input)
     {
         moveInput = input;
-    }
-
-    [ServerRpc]
-    private void SubmitJumpServerRpc()
-    {
-        if (rb != null && isGrounded)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        }
     }
 
     private void Update()
