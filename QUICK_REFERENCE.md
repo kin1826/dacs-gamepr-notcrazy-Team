@@ -59,6 +59,11 @@ Gameplay scene:
 
 - [ ] Co it nhat 2 spawn point tag `Spawn`
 - [ ] Single player uu tien spawn tai object ten `Spawn_1`
+- [ ] Level complete nen to chuc `Doors_Complete > Door_1 / Door_2`
+- [ ] Parent `Doors_Complete` co `LevelCompleteDoorGroup`
+- [ ] `Door_1` va `Door_2` co `LevelComplete` cung `groupId`
+- [ ] `Door_2` se bi an trong single neu `hideSecondaryDoorInSingle` bat
+- [ ] Door multiplayer nen co `NetworkObject` de sync hieu ung truot/player stick qua RPC
 - [ ] Co DieZone voi `KillZoneReload`
 - [ ] Trap platform neu can sync thi co `NetworkObject` + `NetworkTransform`
 - [ ] Scene nam trong `Build Settings`
@@ -81,6 +86,7 @@ Single:
 - [ ] Nhay duoc
 - [ ] Roi vao DieZone reload scene
 - [ ] Trap platform move dung
+- [ ] Cham door thi player dinh theo door va load scene tiep theo
 
 Multiplayer:
 
@@ -95,6 +101,7 @@ Multiplayer:
 - [ ] Client nhay duoc
 - [ ] Trap kich hoat dong bo
 - [ ] DieZone reload ca team
+- [ ] Ca hai player vao 2 door thi moi complete level
 
 Android:
 

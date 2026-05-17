@@ -56,6 +56,7 @@ Gameplay hien tai tap trung vao:
 | `MobileControlButton.cs` | Nut UI mobile de di trai/phai/nhay |
 | `KillZoneReload.cs` | Roi vao die zone thi reload scene |
 | `LevelComplete.cs` | Qua cong ket thuc level va load scene tiep theo |
+| `LevelCompleteDoorGroup.cs` | An/hien Door_2 tuy single hay multiplayer |
 | `TrapAction.cs` | Action chung cho trap: move, active object, collider, reload |
 | `TrapTrigger.cs` | Trigger kich hoat trap theo dieu kien |
 | `TrapButton.cs` | Nut bam trong level: press once, toggle, hold |
@@ -76,6 +77,7 @@ Da hoat dong:
 - Ben kia thay animation chay va huong nhin.
 - Mobile control button da co code.
 - KillZone reload scene dung cho single/multi.
+- LevelComplete ho tro 1 scene dung chung: single an Door_2, multiplayer hien ca Door_1 va Door_2.
 - Trap system co ban da co code.
 
 Can tiep tuc lam:
@@ -105,6 +107,15 @@ Scene gameplay, vi du `Level_1`:
 
 - It nhat 2 object tag `Spawn`.
 - Nen co object ten `Spawn_1` de single player spawn dung vi tri mac dinh.
+- Nen to chuc hierarchy:
+  - `Doors_Complete`
+  - `Door_1`
+  - `Door_2`
+- Gan `LevelCompleteDoorGroup` vao `Doors_Complete`.
+- Keo `Door_1` vao `primaryDoor`, `Door_2` vao `secondaryDoor`.
+- Bat `hideSecondaryDoorInSingle` de single chi hien Door_1.
+- Gan `LevelComplete` vao ca `Door_1` va `Door_2`, cung `groupId`; multiplayer moi player dung 1 door moi complete.
+- Door multiplayer nen co `NetworkObject` de sync hieu ung truot/player stick.
 - Cac platform, trap, DieZone.
 - Khong nen co player dat san trong scene.
 - Neu co `NetworkManager` duplicate trong level thi code se destroy duplicate, nhung cach sach hon la chi giu NetworkManager o `Menu`.
