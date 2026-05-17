@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : NetworkBehaviour
 {
+    public static PlayerMovement LocalPlayer { get; private set; }
+
     public float moveSpeed = 8f;
     public float jumpForce = 5f;
     public float gravity = 2f;
@@ -28,6 +30,11 @@ public class PlayerMovement : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
+        if (!IsMultiplayer())
+        {
+            LocalPlayer = this;
+        }
+
         if (rb == null)
         {
             Debug.LogError("PlayerMovement: Rigidbody2D not found on this object!");
@@ -41,6 +48,11 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (IsOwner)
+        {
+            LocalPlayer = this;
+        }
+
         isRunningNetwork.OnValueChanged += OnRunningChanged;
         facingSignNetwork.OnValueChanged += OnFacingChanged;
 
@@ -50,22 +62,65 @@ public class PlayerMovement : NetworkBehaviour
 
     public void OnMove(InputValue value)
     {
-        if (!IsOwner) return;
-        if (NetworkManager.Singleton == null) return;
+        if (!HasLocalControl()) return;
 
-        moveInput = value.Get<Vector2>();
-        SubmitMovementServerRpc(moveInput);
+        SetMoveInput(value.Get<Vector2>());
     }
 
     public void OnJump(InputValue value)
     {
-        if (!IsOwner) return;
-        if (NetworkManager.Singleton == null) return;
+        if (!HasLocalControl()) return;
 
         if (value.isPressed && isGrounded && rb != null)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            Jump();
         }
+    }
+
+    public void MoveLeftDown()
+    {
+        if (!HasLocalControl()) return;
+
+        SetMoveInput(Vector2.left);
+    }
+
+    public void MoveRightDown()
+    {
+        if (!HasLocalControl()) return;
+
+        SetMoveInput(Vector2.right);
+    }
+
+    public void MoveStop()
+    {
+        if (!HasLocalControl()) return;
+
+        SetMoveInput(Vector2.zero);
+    }
+
+    public void JumpPressed()
+    {
+        if (!HasLocalControl()) return;
+
+        if (isGrounded && rb != null)
+        {
+            Jump();
+        }
+    }
+
+    private void SetMoveInput(Vector2 input)
+    {
+        moveInput = input;
+
+        if (IsMultiplayer())
+        {
+            SubmitMovementServerRpc(moveInput);
+        }
+    }
+
+    private void Jump()
+    {
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
 
     [ServerRpc]
@@ -76,7 +131,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return;
+        if (!HasLocalControl()) return;
         if (rb == null || groundCheck == null) return;
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
@@ -93,7 +148,10 @@ public class PlayerMovement : NetworkBehaviour
         if (isRunning != lastRunning)
         {
             lastRunning = isRunning;
-            SetRunningServerRpc(isRunning);
+            if (IsMultiplayer())
+            {
+                SetRunningServerRpc(isRunning);
+            }
         }
 
         if (moveInput.x != 0)
@@ -104,14 +162,17 @@ public class PlayerMovement : NetworkBehaviour
             if (facingSign != lastFacingSign)
             {
                 lastFacingSign = facingSign;
-                SetFacingServerRpc(facingSign);
+                if (IsMultiplayer())
+                {
+                    SetFacingServerRpc(facingSign);
+                }
             }
         }
     }
 
     private void FixedUpdate()
     {
-        if (!IsOwner) return;
+        if (!HasLocalControl()) return;
         if (rb == null) return;
 
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
@@ -154,8 +215,23 @@ public class PlayerMovement : NetworkBehaviour
         transform.localScale = scale;
     }
 
+    private bool HasLocalControl()
+    {
+        return IsMultiplayer() ? IsOwner : true;
+    }
+
+    private bool IsMultiplayer()
+    {
+        return NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient;
+    }
+
     public override void OnNetworkDespawn()
     {
+        if (LocalPlayer == this)
+        {
+            LocalPlayer = null;
+        }
+
         isRunningNetwork.OnValueChanged -= OnRunningChanged;
         facingSignNetwork.OnValueChanged -= OnFacingChanged;
         base.OnNetworkDespawn();

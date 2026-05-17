@@ -28,6 +28,7 @@ public class NetworkConfig : MonoBehaviour
 
     private UnityTransport transport;
     private Task initializeTask;
+    private GameObject singlePlayerInstance;
 
     public static NetworkConfig EnsureInstance()
     {
@@ -105,6 +106,66 @@ public class NetworkConfig : MonoBehaviour
                 Destroy(networkManager.gameObject);
             }
         }
+
+        SpawnSinglePlayerIfNeeded(scene);
+    }
+
+    private void SpawnSinglePlayerIfNeeded(Scene scene)
+    {
+        if (GameData.IsMultiplayer || scene.name == "Menu")
+        {
+            return;
+        }
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient)
+        {
+            return;
+        }
+
+        if (Object.FindFirstObjectByType<PlayerMovement>() != null)
+        {
+            return;
+        }
+
+        NetworkManager networkManager = GetComponent<NetworkManager>();
+        if (networkManager == null || networkManager.NetworkConfig.PlayerPrefab == null)
+        {
+            Debug.LogError("Cannot spawn single player: NetworkManager PlayerPrefab is missing.");
+            return;
+        }
+
+        Transform spawnPoint = FindSinglePlayerSpawnPoint();
+        Vector3 spawnPosition = spawnPoint != null ? spawnPoint.position : Vector3.zero;
+
+        singlePlayerInstance = Instantiate(networkManager.NetworkConfig.PlayerPrefab, spawnPosition, Quaternion.identity);
+        singlePlayerInstance.name = "Player";
+
+        PlayerSkinManager skinManager = singlePlayerInstance.GetComponent<PlayerSkinManager>();
+        if (skinManager != null)
+        {
+            skinManager.SetSkin(GameData.SelectedDino);
+        }
+
+        Debug.Log($"Single player spawned at {(spawnPoint != null ? spawnPoint.name : "world origin")}.");
+    }
+
+    private Transform FindSinglePlayerSpawnPoint()
+    {
+        GameObject spawnOne = GameObject.Find("Spawn_1");
+        if (spawnOne != null)
+        {
+            return spawnOne.transform;
+        }
+
+        GameObject[] spawns = GameObject.FindGameObjectsWithTag("Spawn");
+        if (spawns.Length == 0)
+        {
+            Debug.LogWarning("No Spawn_1 or Spawn tag found. Single player will spawn at world origin.");
+            return null;
+        }
+
+        System.Array.Sort(spawns, (a, b) => string.CompareOrdinal(a.name, b.name));
+        return spawns[0].transform;
     }
 
     /// <summary>
