@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Assets\Script\PlayerSkinManager.cs" />
     <Compile Include="Assets\Script\core\NetworkErrorHandler.cs" />
+    <Compile Include="Assets\Script\LevelCompleteDoorGroup.cs" />
     <Compile Include="Assets\Script\TriggerZone.cs" />
     <Compile Include="Assets\Script\core\GameData.cs" />
     <Compile Include="Assets\Script\TrapAction.cs" />

@@ -48,6 +48,10 @@ Trang thai nen hieu la:
   - Single: reload local scene.
   - Multiplayer: host/server reload scene cho ca team.
 - LevelComplete khong con parent `NetworkObject` sai cach.
+- LevelComplete single: 1 player cham door la complete.
+- LevelComplete multiplayer: can du player connected dung o cac door trong cung `groupId`.
+- LevelComplete dung RPC neu door co `NetworkObject` de sync hieu ung door truot va player stick theo door.
+- `LevelCompleteDoorGroup` giup mot scene dung chung: single an Door_2, multiplayer hien ca hai door.
 - Host/server dieu khien scene transition.
 
 ### Trap System
@@ -79,7 +83,8 @@ Dung de tao:
 | `Assets/Script/PlayerSkinManager.cs` | Da sua | Sync selected dino skin |
 | `Assets/Script/PlayerSpawner.cs` | Da sua | Spawn only outside Menu, spawn validation |
 | `Assets/Script/KillZoneReload.cs` | Da sua | Host/server reload trong multiplayer |
-| `Assets/Script/LevelComplete.cs` | Da sua | Khong parent NetworkObject, host load next scene |
+| `Assets/Script/LevelComplete.cs` | Da sua | Single 1 door, multi nhieu door cung group, player stick khong parent |
+| `Assets/Script/LevelCompleteDoorGroup.cs` | Moi | An/hien Door_2 tuy single/multiplayer |
 | `Assets/Script/MobileControlButton.cs` | Moi | Nut mobile UI |
 | `Assets/Script/TrapAction.cs` | Moi | Action chung cho trap |
 | `Assets/Script/TrapTrigger.cs` | Moi | Trigger chung cho trap |
@@ -135,6 +140,9 @@ Code mobile da co, nhung layout UI tren Android can test that:
 - [ ] Ca hai spawn dung.
 - [ ] Ca hai thay animation cua nhau.
 - [ ] Ca hai nhay duoc.
+- [ ] Single complete level voi 1 door.
+- [ ] Multiplayer chi complete khi du player dung vao cac door.
+- [ ] Single an Door_2 qua `LevelCompleteDoorGroup`.
 
 ### Trap Test
 
