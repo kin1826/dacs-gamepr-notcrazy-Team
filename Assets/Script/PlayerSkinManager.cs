@@ -16,24 +16,21 @@ public class PlayerSkinManager : NetworkBehaviour
     public RuntimeAnimatorController[] dinoSkins;
 
     private NetworkVariable<int> skinIndex = new NetworkVariable<int>(-1);
+    private bool referencesReady;
+
+    private void Start()
+    {
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsConnectedClient)
+        {
+            LocalPlayer = this;
+            SetSkin(GameData.SelectedDino);
+        }
+    }
 
     public override void OnNetworkSpawn()
     {
-        // Validate animator assignment
-        if (animator == null)
+        if (!InitializeReferences())
         {
-            animator = GetComponent<Animator>();
-            if (animator == null)
-            {
-                Debug.LogError("PlayerSkinManager: No Animator found! Assign one in inspector or attach to object with Animator.");
-                return;
-            }
-        }
-
-        // Validate skin array
-        if (dinoSkins == null || dinoSkins.Length == 0)
-        {
-            Debug.LogError("PlayerSkinManager: No dino skins assigned in inspector!");
             return;
         }
 
@@ -51,8 +48,40 @@ public class PlayerSkinManager : NetworkBehaviour
         ApplySkin(skinIndex.Value);
     }
 
+    private bool InitializeReferences()
+    {
+        if (referencesReady)
+        {
+            return true;
+        }
+
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                Debug.LogError("PlayerSkinManager: No Animator found! Assign one in inspector or attach to object with Animator.");
+                return false;
+            }
+        }
+
+        if (dinoSkins == null || dinoSkins.Length == 0)
+        {
+            Debug.LogError("PlayerSkinManager: No dino skins assigned in inspector!");
+            return false;
+        }
+
+        referencesReady = true;
+        return true;
+    }
+
     public void SetSkin(int index)
     {
+        if (!InitializeReferences())
+        {
+            return;
+        }
+
         ApplySkin(index);
 
         if (IsSpawned && IsOwner)

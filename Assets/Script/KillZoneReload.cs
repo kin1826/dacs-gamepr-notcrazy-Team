@@ -15,6 +15,11 @@ public class KillZoneReload : MonoBehaviour
             // For multiplayer, use NetworkManager scene loading
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient)
             {
+                if (!NetworkManager.Singleton.IsServer)
+                {
+                    return;
+                }
+
                 Debug.Log("Requesting scene reload via network...");
                 NetworkManager.Singleton.SceneManager.LoadScene(
                     SceneManager.GetActiveScene().name,

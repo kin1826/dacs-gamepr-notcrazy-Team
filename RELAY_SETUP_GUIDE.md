@@ -1,132 +1,157 @@
-# 🚀 Unity Relay Setup Guide
+# Unity Relay Setup Guide
 
-## Prerequisites
-- Unity 2021.3 or later
-- Unity Netcode for GameObjects 2.11.2+
-- Unity Services account
+## Muc Dich
 
-## 📦 1. Install Required Packages
+Project nay dung Unity Relay de 2 may khac nhau co the ket noi online bang join code.
 
-### Via Unity Package Manager:
-1. **Window** → **Package Manager**
-2. **Click "+"** → **Add package by name**
-3. **Install these packages:**
-   - `com.unity.netcode.gametransport` (version 2.11.2)
-   - `com.unity.services.multiplayer` (version 2.2.2)
-   - `com.unity.services.authentication` (version 3.6.1)
+Host tao phong:
 
-## ⚙️ 2. Setup Unity Services
+- Unity Services initialize.
+- Authentication sign in anonymous.
+- Relay tao allocation.
+- Host lay join code.
+- UnityTransport duoc set host relay data.
+- `NetworkManager.StartHost()` chay.
 
-### Enable Services:
-1. **Edit** → **Project Settings** → **Services**
-2. **Create/Sign in** to Unity Services account
-3. **Enable "Multiplayer"** service
-4. **Enable "Relay"** in Multiplayer settings
+Client join phong:
 
-### Get Project ID:
-- Your Project ID will be auto-filled in Services window
-- Note: `Project ID` for later reference
+- Client nhap join code.
+- Code duoc normalize: trim, uppercase, bo ky tu la.
+- Relay join allocation.
+- UnityTransport duoc set client relay data.
+- `NetworkManager.StartClient()` chay.
 
-## 🎮 3. Scene Setup
+## Package Dang Dung
 
-### NetworkManager Setup:
-1. **Create empty GameObject** named "NetworkManager"
-2. **Add components:**
-   - `NetworkManager` (from Netcode for GameObjects)
-   - `UnityTransport` (from Netcode Game Transport)
-   - `NetworkSetup` (our custom script)
-   - `NetworkConfig` (our custom script)
+Kiem tra trong `Packages/manifest.json`:
 
-### UI Setup:
-1. **Create Canvas** with these elements:
-   - **Host Button** → calls `NetworkUI.StartHost()`
-   - **Join Button** → calls `NetworkUI.StartClient()`
-   - **Join Code Input Field** (TMP_InputField)
-   - **Status Text** (TMP_Text)
-   - **Join Code Display** (TMP_Text)
-   - **Use Relay Toggle** (set to ON by default)
+- `com.unity.netcode.gameobjects`
+- `com.unity.services.multiplayer`
+- `com.unity.services.authentication`
+- `com.unity.transport`
 
-2. **Add NetworkUI component** to Canvas
-3. **Assign all UI references** in NetworkUI inspector
+## Unity Services Can Bat
 
-### MainManager Setup:
-- Ensure MainManager is in scene
-- Assign all panel references
-- Assign dino sprite array
-- Assign button references
+Trong Unity:
 
-## 🔧 4. Build Settings
+1. `Edit > Project Settings > Services`
+2. Dang nhap Unity account.
+3. Link project voi Unity Cloud Project.
+4. Bat Multiplayer/Relay service neu Unity yeu cau.
+5. Dam bao ca host build va client build deu cung mot Unity Project ID.
 
-### For Testing:
-1. **File** → **Build Settings**
-2. **Add both scenes:**
-   - Main Menu scene
-   - Level_01 scene
-3. **Set Main Menu as Scene 0**
+## NetworkManager Setup
 
-### Player Settings:
-1. **Edit** → **Project Settings** → **Player**
-2. **Other Settings** → **Configuration**
-3. **Api Compatibility Level:** `.NET Standard 2.1`
-4. **IL2CPP** (recommended for relay)
+Object `NetworkManager` trong scene `Menu` nen co:
 
-## 🧪 5. Testing Relay
+- `NetworkManager`
+- `UnityTransport`
+- `NetworkConfig`
 
-### Local Testing (Same Machine):
-1. **Build the game** (File → Build and Run)
-2. **Run in Editor** as second instance
-3. **Host creates room** → gets join code
-4. **Client enters code** → joins successfully
+Trong `NetworkManager`:
 
-### Online Testing:
-1. **Build for target platform** (Windows/Mac)
-2. **Run one instance as host**
-3. **Run second instance as client**
-4. **Use the join code** to connect
+- `Network Transport`: tro toi `UnityTransport`
+- `Player Prefab`: tro toi `Assets/Prefab/Player.prefab`
+- `Enable Scene Management`: bat
+- `Auto Spawn Player Prefab Client Side`: giu theo cau hinh hien tai neu dang chay on
 
-## 🔍 6. Troubleshooting
+## NetworkConfig
 
-### Common Issues:
+File: `Assets/Script/NetworkConfig.cs`
 
-**"Relay service not available"**
-- Check Unity Services are enabled
-- Verify internet connection
-- Check Project ID in Services window
+Nhiem vu:
 
-**"Failed to create relay"**
-- Ensure packages are installed correctly
-- Check Unity version compatibility
-- Verify authentication is working
+- Tao singleton `NetworkConfig.Instance`
+- Tu gan vao `NetworkManager` neu scene chua co
+- `DontDestroyOnLoad` de NetworkManager song qua scene
+- Khoi tao Unity Services
+- Dang nhap anonymous
+- Tao Relay allocation
+- Join Relay allocation
+- Destroy duplicate NetworkManager khi load gameplay scene
 
-**"Join code invalid"**
-- Join codes expire after ~10 minutes
-- Host must be running when client tries to join
-- Check code is copied exactly (case-sensitive)
+## Join Code
 
-### Debug Logs:
-- Enable **Development Build** in Build Settings
-- Check **Player.log** for detailed errors
-- Use **NetworkConfig** debug messages
+Khi host tao phong, xem Console dong:
 
-## 📋 7. Code Flow
-
-```
-1. Player clicks "Host" → NetworkConfig.CreateRelay()
-2. Relay service creates allocation → returns join code
-3. Host displays join code to share
-4. Client enters code → NetworkConfig.JoinRelay()
-5. Relay connects client to host
-6. Both players can see each other in game
+```text
+Share this Relay join code with the client: ABC123
 ```
 
-## 🎯 8. Next Steps
+Client nhap dung code nay.
 
-- **Add player name system**
-- **Implement chat system**
-- **Add room browser**
-- **Create matchmaking system**
+Luu y:
 
----
+- Join code chi ton tai khi host con dang chay.
+- Neu host stop Play mode/build thi code het dung.
+- Code co the expire sau mot thoi gian.
+- Hai may phai dung cung Unity Cloud Project.
+- Neu copy code co space/newline, project da normalize code truoc khi join.
 
-**🎉 Relay setup complete! Your multiplayer game now supports online connections!**</content>
-<parameter name="filePath">e:\DACS\DACS3\unity_main\notcrazy\RELAY_SETUP_GUIDE.md
+## Loi Thuong Gap
+
+### Not Found: join code not found
+
+Nguyen nhan thuong gap:
+
+- Nhap sai code.
+- Host da tat game/stop Play mode.
+- Host va client khac Unity Project ID.
+- Code da expire.
+- Client nhap code cu cua phong truoc.
+
+Cach kiem tra:
+
+1. Host tao lai phong moi.
+2. Copy code moi trong Console hoac UI.
+3. Client nhap lai code.
+4. Dam bao host van dang o trong game.
+
+### Failed to create relay
+
+Kiem tra:
+
+- Internet.
+- Unity Services da link project.
+- Authentication service co hoat dong.
+- Package Unity Services Multiplayer/Authentication da cai.
+
+### Client join duoc nhung khong vao scene
+
+Kiem tra:
+
+- Host moi duoc bam Play.
+- Scene can load nam trong `Scenes In Build`.
+- `NetworkManager.Enable Scene Management` da bat.
+
+## Test Relay
+
+Test 2 may:
+
+1. May A mo game.
+2. May A bam Multiplayer > Create Room.
+3. May A chon dino.
+4. May B mo game.
+5. May B bam Multiplayer, nhap code cua May A.
+6. May B chon dino.
+7. May A thay dino cua May B.
+8. May A bam Play.
+9. Ca hai vao level.
+
+Test Android:
+
+- Co the test 1 Android + 1 Editor/PC.
+- Android phai co internet.
+- Neu UI bi doc, set orientation thanh Landscape Left trong Player Settings.
+
+## Khi Nao Can Sua Relay Code?
+
+Hien tai khong can sua neu chi choi 2 nguoi bang join code.
+
+Chi can mo rong khi:
+
+- Muon room browser.
+- Muon matchmaking tu dong.
+- Muon player name.
+- Muon reconnect.
+- Muon nhieu hon 2 nguoi.
