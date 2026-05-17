@@ -1,203 +1,124 @@
-# Quick Reference - Multiplayer & Relay Checklist
+# Quick Reference
 
-## ✅ Code Review Complete (All 15 Issues Fixed)
+## Project Snapshot
 
-### Before Starting Development
-- [ ] Read [CODE_REVIEW_SUMMARY.md](CODE_REVIEW_SUMMARY.md)
-- [ ] Read [MULTIPLAYER_SETUP_GUIDE.md](MULTIPLAYER_SETUP_GUIDE.md)
-- [ ] Verify all scenes have MainManager prefab
-- [ ] Verify all scenes have NetworkManager prefab
-- [ ] Verify all scenes have player spawn points tagged with "Spawn"
+- The loai: 2D platform puzzle.
+- Mode: single player va 2-player online co-op.
+- Online: Unity Relay join code.
+- Input: keyboard va mobile UI button.
+- Target hien tai: PC/Editor va Android APK test.
 
----
+## Play Flow
 
-## 🎮 Testing Checklist
+Single:
 
-### Local Co-op (Same Machine)
-```
-1. Start game twice (two instances)
-2. Instance 1: Multiplayer → Create Room
-3. Instance 2: Multiplayer → Enter room code
-4. Both players select dinosaur
-5. Both players enter level
-6. Test: One player triggers platform, verify both see it move
-7. Test: One player touches kill zone, verify both reload
-8. Test: One player touches goal, verify both advance to next level
-```
+1. Menu > Single.
+2. Chon dino.
+3. Vao level.
+4. Player duoc spawn tai `Spawn_1`.
 
-### Network Testing (Two Machines)
-```
-1. Machine A: Same network as Machine B
-2. Machine A: Create Room → copy code
-3. Machine B: Enter code from Machine A
-4. Both test gameplay
-5. Disconnect one machine → verify cleanup
-```
+Multiplayer:
 
-### Error Testing
-```
-1. Start without NetworkManager → verify error message
-2. Join with wrong code → verify rejection
-3. Disconnect mid-game → verify cleanup and error handling
-4. Verify log messages are helpful for debugging
-```
+1. Host: Menu > Multiplayer > Create Room.
+2. Host copy/share join code.
+3. Client: nhap join code > Join.
+4. Host va client chon dino.
+5. Host thay client da chon dino.
+6. Host bam Play.
+7. Ca hai vao level.
 
----
+## Files Quan Trong
 
-## 🔧 Configuration
+| File | Dung de lam gi |
+|---|---|
+| `Assets/Script/manager/MainManager.cs` | Menu flow, create/join room, chon dino, start game |
+| `Assets/Script/NetworkConfig.cs` | Relay, Unity Services, NetworkManager persistence, single spawn |
+| `Assets/Script/LobbyManager.cs` | Sync dino trong lobby |
+| `Assets/Script/PlayerMovement.cs` | Movement, jump, animation sync, mobile API |
+| `Assets/Script/MobileControlButton.cs` | Nut mobile UI |
+| `Assets/Script/PlayerSkinManager.cs` | Sync skin dino |
+| `Assets/Script/PlayerSpawner.cs` | Spawn player vao spawn point |
+| `Assets/Script/KillZoneReload.cs` | Reload scene khi player roi vao DieZone |
+| `Assets/Script/TrapAction.cs` | Action chung cho trap |
+| `Assets/Script/TrapTrigger.cs` | Trigger kich hoat trap |
+| `Assets/Script/TrapButton.cs` | Button trap press/toggle/hold |
 
-### NetworkConfig Settings (for Relay)
-Located in: `Assets/Script/core/NetworkConfig.cs`
+## Hierarchy Checklist
 
-```csharp
-// In Inspector or code:
-NetworkConfig.Instance.relaySettings.useRelay = true;
-NetworkConfig.Instance.relaySettings.relayEndpoint = "relay.unity.com";
-NetworkConfig.Instance.relaySettings.maxPlayers = 2;
-NetworkConfig.Instance.relaySettings.connectionTimeoutSeconds = 30;
-```
+Scene `Menu`:
 
-### Relay Provider Selection
-- **Unity Relay (Recommended):**
-  - Managed service
-  - Official support
-  - Easier setup
-  - [Setup Guide](MULTIPLAYER_SETUP_GUIDE.md#option-a-unity-netcode-relay-recommended)
+- [ ] Co `NetworkManager`
+- [ ] `NetworkManager` co `UnityTransport`
+- [ ] `NetworkManager` co `NetworkConfig`
+- [ ] `NetworkManager.PlayerPrefab` tro toi `Player.prefab`
+- [ ] Co `LobbyManager` + `NetworkObject`
+- [ ] `MainManager` gan du reference UI
+- [ ] Button OnClick tro toi class `MainManager`, khong con event cu bi missing
 
-- **Custom Relay Server:**
-  - More control
-  - Custom logic
-  - Requires backend
-  - [Setup Guide](MULTIPLAYER_SETUP_GUIDE.md#option-b-custom-relay-server)
+Gameplay scene:
 
----
+- [ ] Co it nhat 2 spawn point tag `Spawn`
+- [ ] Single player uu tien spawn tai object ten `Spawn_1`
+- [ ] Co DieZone voi `KillZoneReload`
+- [ ] Trap platform neu can sync thi co `NetworkObject` + `NetworkTransform`
+- [ ] Scene nam trong `Build Settings`
 
-## 🐛 Troubleshooting
+Android:
 
-| Problem | Solution |
-|---------|----------|
-| "NetworkManager not found" | Add NetworkManager prefab to scene |
-| Players spawn wrong position | Ensure spawn points tagged "Spawn" |
-| Scene doesn't load for both | Use NetworkManager.SceneManager.LoadScene() |
-| Dino skin not syncing | Check PlayerSkinManager on player prefab |
-| Platform doesn't move | Ensure PlatformSequence is on networked prefab |
-| Disconnection crashes | Update to latest NetworkErrorHandler |
-| Room code doesn't work | Verify both using same MainManager |
+- [ ] Platform switched to Android
+- [ ] Orientation: `Landscape Left`
+- [ ] Mobile buttons co `MobileControlButton`
+- [ ] Canvas co `GraphicRaycaster`
+- [ ] Scene co `EventSystem`
 
----
+## Test Checklist
 
-## 📋 Relay Integration Steps
+Single:
 
-### Step 1: Install Package
-```
-Window → Package Manager
-Add by Name: com.unity.netcode.gametransport
-```
+- [ ] Player spawn tai `Spawn_1`
+- [ ] Chon dino dung mau
+- [ ] Di chuyen duoc
+- [ ] Nhay duoc
+- [ ] Roi vao DieZone reload scene
+- [ ] Trap platform move dung
 
-### Step 2: Configure MainManager
-Update `JoinRoom()` to use relay code instead of local comparison
+Multiplayer:
 
-### Step 3: Update NetworkConfig
-```csharp
-relaySettings.useRelay = true;
-relaySettings.relayEndpoint = "your-relay-endpoint.com";
-```
+- [ ] Host tao duoc room code
+- [ ] Client join duoc bang code
+- [ ] Host/client thay dino cua nhau
+- [ ] Host bam Play thi ca hai vao level
+- [ ] Ca hai spawn dung vi tri
+- [ ] Ca hai dung skin da chon
+- [ ] Host thay client chay animation
+- [ ] Client thay host chay animation
+- [ ] Client nhay duoc
+- [ ] Trap kich hoat dong bo
+- [ ] DieZone reload ca team
 
-### Step 4: Test
-- [ ] Test on two machines
-- [ ] Test on different networks
-- [ ] Test disconnection
-- [ ] Test reconnection
+Android:
 
----
+- [ ] Game mo ngang
+- [ ] Nut trai/phai giu de di chuyen
+- [ ] Tha nut thi dung
+- [ ] Nut jump nhay duoc
+- [ ] UI khong che man choi qua nhieu
 
-## 📊 Important Files Reference
+## Loi Thuong Gap
 
-| File | Purpose | Modified |
-|------|---------|----------|
-| MainManager.cs | Scene flow & UI | ✅ Fixed |
-| PlayerSpawner.cs | Player positioning | ✅ Fixed |
-| PlayerMovement.cs | Input handling | ✅ Fixed |
-| LobbyManager.cs | Dino sync | ✅ Fixed |
-| NetworkConfig.cs | Relay config | ✨ NEW |
-| NetworkErrorHandler.cs | Error handling | ✨ NEW |
-| PlatformSequence.cs | Networked platforms | ✅ Fixed |
-| LevelComplete.cs | Scene transitions | ✅ Fixed |
+| Loi | Can kiem tra |
+|---|---|
+| Join code not found | Code moi, host con chay, cung Unity Project ID |
+| Client khong vao scene | Host moi duoc bam Play, scene co trong Build Settings |
+| Single khong spawn player | Kiem tra `NetworkManager.PlayerPrefab` va object `Spawn_1` |
+| Spawn sai/bao thieu spawn | Gameplay scene can `Spawn_1` cho single va 2 object tag `Spawn` cho multi |
+| Client khong thay platform move | Trap platform can `NetworkObject` + `NetworkTransform` |
+| Skin sai mau | Kiem tra `PlayerSkinManager` va `dinoSkins` tren prefab |
+| Mobile button khong bam duoc | EventSystem, GraphicRaycaster, Raycast Target |
 
----
+## Tai Lieu Noi Bo
 
-## 🎯 Key Principles
-
-1. **Server Authority:** All critical decisions on server
-2. **Input Validation:** ServerRpc for all user actions
-3. **Error Resilience:** Always handle null/invalid cases
-4. **Network Sync:** Use NetworkVariable for continuous state
-5. **Disconnection:** Always clean up disconnected players
-
----
-
-## 💡 Pro Tips
-
-1. **Enable verbose logging:**
-   ```csharp
-   NetworkErrorHandler.Instance.logErrors = true;
-   NetworkErrorHandler.Instance.logWarnings = true;
-   ```
-
-2. **Check network status:**
-   ```csharp
-   if (NetworkErrorHandler.IsNetworkManagerReady())
-   {
-       // Proceed with network operations
-   }
-   ```
-
-3. **For debugging relay issues:**
-   ```csharp
-   NetworkConfig.Instance.LogConfiguration();
-   ```
-
-4. **Add more spawn points for 3+ players:**
-   - In level, create 3+ GameObjects
-   - Tag each with "Spawn"
-   - Position where players should spawn
-
----
-
-## 🚀 Next Milestone: Relay Live
-
-1. ✅ Code fixed and tested locally
-2. ⏳ Choose relay provider (1 hour)
-3. ⏳ Setup relay account (1 hour)
-4. ⏳ Integrate relay package (1 hour)
-5. ⏳ Test on two machines (2 hours)
-6. ⏳ Deploy and go live!
-
-**Total Time to Relay:** ~5 hours of active work
-
----
-
-## 📞 Common Questions
-
-**Q: Can I add more than 2 players?**
-A: Yes! Just add more spawn points and ensure your game logic supports it.
-
-**Q: How do I handle reconnection?**
-A: NetworkErrorHandler already handles disconnection cleanup. For reconnection, update JoinRoom() to use relay join code.
-
-**Q: What about lag/latency?**
-A: Relay adds minimal latency (~20-50ms). Optimize network updates if needed.
-
-**Q: Can I test without relay?**
-A: Yes! Local co-op works on same network without relay. Relay only needed for internet play.
-
-**Q: How secure is relay?**
-A: Relay encrypts connections and validates room codes. Input is server-validated to prevent cheating.
-
----
-
-## ✨ Ready to Ship!
-
-Your multiplayer project is production-ready. All critical issues are fixed, error handling is comprehensive, and relay integration is straightforward.
-
-Good luck! 🎮
+- `MULTIPLAYER_SETUP_GUIDE.md`: tong quan project va multiplayer.
+- `RELAY_SETUP_GUIDE.md`: setup Relay va fix loi join.
+- `TRAP_SETUP_GUIDE.md`: setup trap trong hierarchy.
+- `CODE_REVIEW_SUMMARY.md`: trang thai code va nhung gi da lam.
