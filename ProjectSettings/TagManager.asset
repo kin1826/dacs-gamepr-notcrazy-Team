@@ -8,6 +8,8 @@ TagManager:
   - Platform_fl
   - Ground
   - Spawn
+  - ButtonWeight
+  - PushBlock
   layers:
   - Default
   - TransparentFX

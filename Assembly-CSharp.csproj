@@ -59,8 +59,11 @@
     <Compile Include="Assets\Script\NetworkUI.cs" />
     <Compile Include="Assets\Script\PlayerSpawner.cs" />
     <Compile Include="Assets\Script\manager\MainManager.cs" />
+    <Compile Include="Assets\Script\SceneTransition.cs" />
+    <Compile Include="Assets\Script\manager\LevelManager.cs" />
     <Compile Include="Assets\Script\KillZoneReload.cs" />
     <Compile Include="Assets\Script\PlatformSequence.cs" />
+    <Compile Include="Assets\Script\PushBlock.cs" />
     <Compile Include="Assets\Script\LobbyManager.cs" />
     <Compile Include="Assets\Script\TrapTrigger.cs" />
     <Compile Include="Assets\Script\LevelComplete.cs" />
