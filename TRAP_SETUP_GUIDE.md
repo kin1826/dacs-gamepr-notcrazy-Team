@@ -100,3 +100,74 @@ Multiplayer:
 - Neu trigger khong kich hoat, kiem tra player co tag `Player` hoac co component `PlayerMovement`.
 - Neu player roi xuong nhung scene khong reload, kiem tra DieZone co `KillZoneReload` va collider da bat `Is Trigger`.
 - Neu platform move sai vi tri, kiem tra `TrapPlatform_Target` da dat dung cho chua.
+
+## Phan 2: Nut Hold Va Khoi De Nut
+
+Muc tieu:
+
+- Mot nut trong level co the giu de kich hoat platform/trap.
+- Player co the dung len nut.
+- Mot khoi day duoc co the de len nut de giu nut trong single hoac multi.
+
+## 1. Tao Nut
+
+1. Tao object nut, vi du `HoldButton`.
+2. Add `BoxCollider2D`.
+3. Bat `Is Trigger`.
+4. Add component `TrapButton`.
+
+Set `TrapButton`:
+
+- `Button Mode`: `Hold`
+- `Auto Convert Hold In Single`: tuy level
+  - Bat neu single chi can cham nut mot lan.
+  - Tat neu single phai dung khoi de nut.
+- `Extra Activator Tags`: them `PushBlock` hoac `ButtonWeight`
+- `Actions`: keo cac `TrapAction` can kich hoat vao.
+
+## 2. Tao Khoi De Nut
+
+1. Tao object khoi, vi du `PushBlock_1`.
+2. Dat tag la `PushBlock` hoac `ButtonWeight`.
+3. Add `Rigidbody2D`.
+4. Add `BoxCollider2D`.
+5. Add component `PushBlock`.
+
+Set `PushBlock`:
+
+- `Freeze Rotation`: bat
+- `Freeze Vertical Position`: tat neu khoi can roi theo gravity
+- `Max Horizontal Speed`: vi du `4`
+- `Stop When Not Pushed`: bat neu muon tha ra la dung ngang ngay
+
+Setup vat ly khuyen dung:
+
+- `Rigidbody2D > Linear Damping`: co the dat `2` den `5` neu van thay truot
+- `Rigidbody2D > Angular Damping`: co the dat `5`
+- Tao `Physics Material 2D` co friction cao va gan vao collider cua khoi/platform neu can them ma sat
+
+Neu dung multiplayer va muon khoi sync:
+
+- Add `NetworkObject`
+- Add `NetworkTransform`
+
+## 3. Cach Hoat Dong
+
+Single:
+
+- Player day khoi len nut.
+- Khoi giu nut.
+- Action cua nut duoc kich hoat.
+
+Multiplayer:
+
+- Mot player co the dung giu nut.
+- Hoac player day khoi len nut de ca hai cung di qua.
+- Neu khoi co `NetworkObject` va `NetworkTransform`, client se thay khoi di chuyen.
+
+## 4. Luu Y Cho Nut Hold
+
+- Neu `Auto Convert Hold In Single` bat, single se khong can khoi de nut.
+- Neu muon puzzle day khoi trong single, hay tat `Auto Convert Hold In Single`.
+- Tag `PushBlock`/`ButtonWeight` can duoc tao trong Unity Tag Manager truoc khi gan cho object.
+- Nut chi kich hoat khi collider cua player hoac khoi di vao trigger cua nut.

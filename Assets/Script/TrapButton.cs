@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,17 +15,34 @@ public class TrapButton : MonoBehaviour
     [Header("Button")]
     public ButtonMode buttonMode = ButtonMode.Hold;
     public bool autoConvertHoldInSingle = true;
+    public string[] extraActivatorTags = { "PushBlock", "ButtonWeight" };
+
+    [Header("Visual")]
+    public Transform visual;
+    public float pressedYOffset = -0.05f;
+    public float pulseDuration = 0.12f;
 
     [Header("Actions")]
     public TrapAction[] actions;
 
-    private readonly HashSet<ulong> playersHolding = new HashSet<ulong>();
+    private readonly HashSet<int> activatorsHolding = new HashSet<int>();
     private bool pressedOnce;
     private bool toggledOn;
+    private Vector3 visualStartLocalPosition;
+
+    private void Awake()
+    {
+        if (visual == null)
+        {
+            visual = transform;
+        }
+
+        visualStartLocalPosition = visual.localPosition;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsPlayer(collision, out ulong clientId))
+        if (!TryGetActivatorId(collision, out int activatorId))
         {
             return;
         }
@@ -34,13 +52,13 @@ public class TrapButton : MonoBehaviour
             return;
         }
 
-        playersHolding.Add(clientId);
+        activatorsHolding.Add(activatorId);
         Press();
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!IsPlayer(collision, out ulong clientId))
+        if (!TryGetActivatorId(collision, out int activatorId))
         {
             return;
         }
@@ -50,9 +68,9 @@ public class TrapButton : MonoBehaviour
             return;
         }
 
-        playersHolding.Remove(clientId);
+        activatorsHolding.Remove(activatorId);
 
-        if (GetEffectiveMode() == ButtonMode.Hold && playersHolding.Count == 0)
+        if (GetEffectiveMode() == ButtonMode.Hold && activatorsHolding.Count == 0)
         {
             DeactivateActions();
         }
@@ -74,6 +92,7 @@ public class TrapButton : MonoBehaviour
 
             case ButtonMode.Toggle:
                 toggledOn = !toggledOn;
+                StartCoroutine(PulsePressedVisual());
                 if (toggledOn)
                 {
                     ActivateActions();
@@ -103,6 +122,11 @@ public class TrapButton : MonoBehaviour
 
     private void ActivateActions()
     {
+        if (GetEffectiveMode() != ButtonMode.Toggle)
+        {
+            SetPressedVisual(true);
+        }
+
         foreach (TrapAction action in actions)
         {
             if (action != null)
@@ -114,6 +138,11 @@ public class TrapButton : MonoBehaviour
 
     private void DeactivateActions()
     {
+        if (GetEffectiveMode() != ButtonMode.Toggle)
+        {
+            SetPressedVisual(false);
+        }
+
         foreach (TrapAction action in actions)
         {
             if (action != null)
@@ -133,21 +162,57 @@ public class TrapButton : MonoBehaviour
         return true;
     }
 
-    private bool IsPlayer(Collider2D collision, out ulong clientId)
+    private bool TryGetActivatorId(Collider2D collision, out int activatorId)
     {
-        clientId = 0;
+        activatorId = 0;
 
-        if (!collision.CompareTag("Player") && collision.GetComponentInParent<PlayerMovement>() == null)
+        PlayerMovement player = collision.GetComponentInParent<PlayerMovement>();
+        if (collision.CompareTag("Player") || player != null)
         {
-            return false;
+            NetworkObject networkObject = collision.GetComponentInParent<NetworkObject>();
+            activatorId = networkObject != null
+                ? networkObject.OwnerClientId.GetHashCode()
+                : collision.GetInstanceID();
+            return true;
         }
 
-        NetworkObject networkObject = collision.GetComponentInParent<NetworkObject>();
-        if (networkObject != null)
+        foreach (string tagName in extraActivatorTags)
         {
-            clientId = networkObject.OwnerClientId;
+            if (!string.IsNullOrWhiteSpace(tagName) && HasTag(collision.gameObject, tagName))
+            {
+                activatorId = collision.attachedRigidbody != null
+                    ? collision.attachedRigidbody.gameObject.GetInstanceID()
+                    : collision.gameObject.GetInstanceID();
+                return true;
+            }
         }
 
-        return true;
+        return false;
+    }
+
+    private bool HasTag(GameObject target, string tagName)
+    {
+        return string.Equals(
+            target.tag.Trim(),
+            tagName.Trim(),
+            System.StringComparison.Ordinal
+        );
+    }
+
+    private void SetPressedVisual(bool isPressed)
+    {
+        if (visual == null)
+        {
+            return;
+        }
+
+        visual.localPosition = visualStartLocalPosition + (isPressed ? new Vector3(0f, pressedYOffset, 0f) : Vector3.zero);
+    }
+
+    private IEnumerator PulsePressedVisual()
+    {
+        SetPressedVisual(true);
+        yield return new WaitForSeconds(pulseDuration);
+        SetPressedVisual(false);
     }
 }

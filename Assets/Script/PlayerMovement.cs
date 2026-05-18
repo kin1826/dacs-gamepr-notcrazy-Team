@@ -15,6 +15,9 @@ public class PlayerMovement : NetworkBehaviour
     public float groundRadius = 0.2f;
     public LayerMask groundLayer;
 
+    [Header("Physics")]
+    public bool useNoFrictionMaterial = true;
+
     [SerializeField] private Animator animator;
 
     private NetworkVariable<bool> isRunningNetwork = new NetworkVariable<bool>(false);
@@ -44,6 +47,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             Debug.LogError("PlayerMovement: groundCheck Transform not assigned!");
         }
+
+        ApplyNoFrictionMaterial();
     }
 
     public override void OnNetworkSpawn()
@@ -223,6 +228,26 @@ public class PlayerMovement : NetworkBehaviour
     private bool IsMultiplayer()
     {
         return NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient;
+    }
+
+    private void ApplyNoFrictionMaterial()
+    {
+        if (!useNoFrictionMaterial)
+        {
+            return;
+        }
+
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        if (playerCollider == null)
+        {
+            return;
+        }
+
+        playerCollider.sharedMaterial = new PhysicsMaterial2D("Player_NoFriction")
+        {
+            friction = 0f,
+            bounciness = 0f
+        };
     }
 
     public override void OnNetworkDespawn()

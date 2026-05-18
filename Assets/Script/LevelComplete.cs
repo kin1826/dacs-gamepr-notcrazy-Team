@@ -18,6 +18,8 @@ public class LevelComplete : NetworkBehaviour
     private bool activated;
     private Transform player;
     private Vector3 playerOffset;
+    private bool previousPlayerSimulated = true;
+    private bool previousPlayerMovementEnabled = true;
 
     private void OnDestroy()
     {
@@ -229,6 +231,7 @@ public class LevelComplete : NetworkBehaviour
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
+            previousPlayerSimulated = rb.simulated;
             rb.linearVelocity = Vector2.zero;
             rb.simulated = false;
         }
@@ -236,10 +239,40 @@ public class LevelComplete : NetworkBehaviour
         PlayerMovement movement = player.GetComponent<PlayerMovement>();
         if (movement != null)
         {
+            previousPlayerMovementEnabled = movement.enabled;
             movement.enabled = false;
         }
 
         StartCoroutine(SlideDown());
+        StartCoroutine(RestoreCompletionAfterDelay());
+    }
+
+    private IEnumerator RestoreCompletionAfterDelay()
+    {
+        yield return new WaitForSeconds(delayBeforeLoad);
+        RestoreCompletionLocal();
+    }
+
+    private void RestoreCompletionLocal()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.simulated = previousPlayerSimulated;
+        }
+
+        PlayerMovement movement = player.GetComponent<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.enabled = previousPlayerMovementEnabled;
+        }
+
+        activated = false;
     }
 
     private IEnumerator SlideDown()
@@ -263,40 +296,17 @@ public class LevelComplete : NetworkBehaviour
     private IEnumerator LoadNextSceneAfterDelay()
     {
         yield return new WaitForSeconds(delayBeforeLoad);
-        LoadNextScene();
-    }
-
-    private void LoadNextScene()
-    {
-        if (IsMultiplayer())
+        
+        string target = GetNextSceneName();
+        if (string.IsNullOrEmpty(target))
         {
-            if (!NetworkManager.Singleton.IsServer)
-            {
-                return;
-            }
-
-            string targetScene = GetNextSceneName();
-            if (string.IsNullOrEmpty(targetScene))
-            {
-                Debug.LogWarning("No next scene available.");
-                return;
-            }
-
-            NetworkManager.Singleton.SceneManager.LoadScene(targetScene, LoadSceneMode.Single);
-            return;
+            target = nextSceneName;
         }
 
-        if (!string.IsNullOrWhiteSpace(nextSceneName))
-        {
-            SceneManager.LoadScene(nextSceneName);
-            return;
-        }
+        Debug.Log($"LevelComplete: Loading level '{target}'");
+        LevelManager.Instance.LoadLevel(target);
 
-        int nextBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        if (nextBuildIndex < SceneManager.sceneCountInBuildSettings)
-        {
-            SceneManager.LoadScene(nextBuildIndex);
-        }
+        yield break;
     }
 
     private string GetNextSceneName()
@@ -342,13 +352,28 @@ public class LevelComplete : NetworkBehaviour
 
     private static Transform FindPlayerByClientId(ulong clientId)
     {
-        NetworkObject[] networkObjects = FindObjectsByType<NetworkObject>(FindObjectsSortMode.None);
-        foreach (NetworkObject networkObject in networkObjects)
+        if (NetworkManager.Singleton == null)
         {
-            if (networkObject.OwnerClientId == clientId && networkObject.GetComponent<PlayerMovement>() != null)
+            return null;
+        }
+
+        try
+        {
+            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var networkClient))
             {
-                return networkObject.transform;
+                if (networkClient.PlayerObject != null)
+                {
+                    var pm = networkClient.PlayerObject.GetComponent<PlayerMovement>();
+                    if (pm != null)
+                    {
+                        return networkClient.PlayerObject.transform;
+                    }
+                }
             }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning($"FindPlayerByClientId: lookup failed: {ex.Message}");
         }
 
         return null;

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9182895234851583840}
   - component: {fileID: 3657010023369497585}
   - component: {fileID: 7557355790116973255}
-  - component: {fileID: 6890764408839472494}
+  - component: {fileID: 6459690881950796905}
   m_Layer: 0
   m_Name: TriggerZone
   m_TagString: Untagged
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.0235493, y: 1.0109138}
   m_EdgeRadius: 0
---- !u!114 &6890764408839472494
+--- !u!114 &6459690881950796905
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,10 +148,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 9571090321327385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a766a2a028ba2143971e0a75d53b40a, type: 3}
+  m_Script: {fileID: 11500000, guid: ecace57ba0a67bd4c810861c615f8ad0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TriggerZone
-  sequence: {fileID: 8897425782438733037}
+  m_EditorClassIdentifier: Assembly-CSharp::TrapTrigger
+  triggerMode: 0
+  requiredCount: 1
+  triggerOnlyOnce: 1
+  actions:
+  - {fileID: 5114713444923184481}
 --- !u!1 &1758052337180597776
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,6 +258,8 @@ GameObject:
   - component: {fileID: 3780325129787817218}
   - component: {fileID: 8958211221720628257}
   - component: {fileID: 4228687907959537477}
+  - component: {fileID: 5114713444923184481}
+  - component: {fileID: 386032263053598630}
   m_Layer: 0
   m_Name: PlatformVisual
   m_TagString: Untagged
@@ -381,6 +387,53 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5114713444923184481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2602270820607444250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d976a561c64457e46b35792904ea819b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapAction
+  ShowTopMostFoldoutHeaderGroup: 1
+  actionType: 0
+  triggerOnlyOnce: 1
+  objectToMove: {fileID: 3780325129787817218}
+  target: {fileID: 9139868804920872456}
+  moveSpeed: 8
+  targetObject: {fileID: 0}
+  activeState: 1
+  targetCollider: {fileID: 0}
+  colliderState: 1
+--- !u!114 &386032263053598630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2602270820607444250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 646763478
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &6117487135420275666
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,7 +443,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5459721356085506892}
-  - component: {fileID: 8897425782438733037}
+  - component: {fileID: 7846020405718265431}
   m_Layer: 0
   m_Name: Move_PlatformTrap
   m_TagString: Untagged
@@ -417,7 +470,7 @@ Transform:
   - {fileID: 818262030957644683}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8897425782438733037
+--- !u!114 &7846020405718265431
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -426,12 +479,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 6117487135420275666}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2856542932796964f98e18e6458dbf49, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlatformSequence
-  platform: {fileID: 3780325129787817218}
-  targetPos: {fileID: 9139868804920872456}
-  speed: 8
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 203782006
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &8336569060949934599
 GameObject:
   m_ObjectHideFlags: 0

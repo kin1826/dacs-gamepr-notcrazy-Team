@@ -34,7 +34,7 @@ Multiplayer:
 | `Assets/Script/manager/MainManager.cs` | Menu flow, create/join room, chon dino, start game |
 | `Assets/Script/NetworkConfig.cs` | Relay, Unity Services, NetworkManager persistence, single spawn |
 | `Assets/Script/LobbyManager.cs` | Sync dino trong lobby |
-| `Assets/Script/PlayerMovement.cs` | Movement, jump, animation sync, mobile API |
+| `Assets/Script/PlayerMovement.cs` | Movement, jump, animation sync, mobile API, no-friction player collider |
 | `Assets/Script/MobileControlButton.cs` | Nut mobile UI |
 | `Assets/Script/PlayerSkinManager.cs` | Sync skin dino |
 | `Assets/Script/PlayerSpawner.cs` | Spawn player vao spawn point |
@@ -42,6 +42,7 @@ Multiplayer:
 | `Assets/Script/TrapAction.cs` | Action chung cho trap |
 | `Assets/Script/TrapTrigger.cs` | Trigger kich hoat trap |
 | `Assets/Script/TrapButton.cs` | Button trap press/toggle/hold |
+| `Assets/Script/PushBlock.cs` | Khoi vat ly de player day va de nut |
 
 ## Hierarchy Checklist
 
@@ -66,6 +67,7 @@ Gameplay scene:
 - [ ] Door multiplayer nen co `NetworkObject` de sync hieu ung truot/player stick qua RPC
 - [ ] Co DieZone voi `KillZoneReload`
 - [ ] Trap platform neu can sync thi co `NetworkObject` + `NetworkTransform`
+- [ ] Push block co tag `PushBlock` hoac `ButtonWeight`, `Rigidbody2D`, `Collider2D`, `PushBlock`
 - [ ] Scene nam trong `Build Settings`
 
 Android:
@@ -86,6 +88,7 @@ Single:
 - [ ] Nhay duoc
 - [ ] Roi vao DieZone reload scene
 - [ ] Trap platform move dung
+- [ ] Push block day duoc va giu duoc nut hold
 - [ ] Cham door thi player dinh theo door va load scene tiep theo
 
 Multiplayer:
@@ -100,6 +103,7 @@ Multiplayer:
 - [ ] Client thay host chay animation
 - [ ] Client nhay duoc
 - [ ] Trap kich hoat dong bo
+- [ ] Push block sync dung neu co `NetworkObject` + `NetworkTransform`
 - [ ] DieZone reload ca team
 - [ ] Ca hai player vao 2 door thi moi complete level
 
@@ -120,6 +124,10 @@ Android:
 | Single khong spawn player | Kiem tra `NetworkManager.PlayerPrefab` va object `Spawn_1` |
 | Spawn sai/bao thieu spawn | Gameplay scene can `Spawn_1` cho single va 2 object tag `Spawn` cho multi |
 | Client khong thay platform move | Trap platform can `NetworkObject` + `NetworkTransform` |
+| Push block khong giu nut | Kiem tra tag co nam trong `TrapButton.extraActivatorTags` |
+| Push block khong day duoc | Kiem tra `Rigidbody2D` dynamic, collider, layer collision |
+| Push block bi truot sau khi tha | Bat `Stop When Not Pushed`, tang Linear Damping/friction |
+| Player bi dinh canh platform | Bat `Use No Friction Material` tren `PlayerMovement` |
 | Skin sai mau | Kiem tra `PlayerSkinManager` va `dinoSkins` tren prefab |
 | Mobile button khong bam duoc | EventSystem, GraphicRaycaster, Raycast Target |
 
