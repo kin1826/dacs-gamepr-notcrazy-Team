@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class LevelCompleteDoorGroup : MonoBehaviour
+public class LevelCompleteDoorGroup : NetworkBehaviour
 {
     [Header("Doors")]
     public GameObject primaryDoor;
@@ -10,18 +10,56 @@ public class LevelCompleteDoorGroup : MonoBehaviour
     [Header("Single Player")]
     public bool hideSecondaryDoorInSingle = true;
 
+    private NetworkVariable<bool> secondaryDoorVisible = new NetworkVariable<bool>(false);
+
     private void Start()
     {
-        bool isMultiplayer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient;
+        if (!IsSpawned)
+        {
+            if (primaryDoor != null)
+            {
+                primaryDoor.SetActive(true);
+            }
 
+            bool isMultiplayer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient;
+            UpdateSecondaryDoor(isMultiplayer || !hideSecondaryDoorInSingle);
+        }
+    }
+
+    public override void OnNetworkSpawn()
+    {
         if (primaryDoor != null)
         {
             primaryDoor.SetActive(true);
         }
 
+        secondaryDoorVisible.OnValueChanged += OnSecondaryDoorVisibleChanged;
+
+        if (IsServer)
+        {
+            bool isMultiplayer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient;
+            secondaryDoorVisible.Value = isMultiplayer || !hideSecondaryDoorInSingle;
+        }
+
+        UpdateSecondaryDoor(secondaryDoorVisible.Value);
+    }
+
+    private void OnSecondaryDoorVisibleChanged(bool oldValue, bool newValue)
+    {
+        UpdateSecondaryDoor(newValue);
+    }
+
+    private void UpdateSecondaryDoor(bool isVisible)
+    {
         if (secondaryDoor != null)
         {
-            secondaryDoor.SetActive(isMultiplayer || !hideSecondaryDoorInSingle);
+            secondaryDoor.SetActive(isVisible);
         }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        secondaryDoorVisible.OnValueChanged -= OnSecondaryDoorVisibleChanged;
+        base.OnNetworkDespawn();
     }
 }

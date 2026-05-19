@@ -123,6 +123,35 @@ public class MainManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Load any scene by name using the same logic as StartGame (multiplayer host uses Netcode).
+    /// </summary>
+    public void LoadLevel(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError("LoadLevel: sceneName is null or empty");
+            return;
+        }
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient)
+        {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                Debug.LogWarning("Only the host can start the multiplayer game.");
+                return;
+            }
+
+            Debug.Log($"MainManager: Loading multiplayer scene via network... {sceneName}");
+            NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+        }
+        else
+        {
+            Debug.Log($"MainManager: Loading local scene... {sceneName}");
+            SceneManager.LoadScene(sceneName);
+        }
+    }
+
     // =========================
     // SINGLE PLAYER
     // =========================

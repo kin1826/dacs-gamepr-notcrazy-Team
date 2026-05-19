@@ -39,6 +39,7 @@ Trang thai nen hieu la:
 - Skin dino sync dung sau khi chon.
 - Movement sync vi tri qua `NetworkTransform`.
 - Running animation va facing direction sync qua `NetworkVariable`.
+- Player collider tu dung no-friction material de tranh dinh canh platform.
 - Client da nhay duoc.
 - Mobile control code da co san.
 
@@ -47,12 +48,12 @@ Trang thai nen hieu la:
 - KillZone reload scene:
   - Single: reload local scene.
   - Multiplayer: host/server reload scene cho ca team.
-- LevelComplete khong con parent `NetworkObject` sai cach.
 - LevelComplete single: 1 player cham door la complete.
 - LevelComplete multiplayer: can du player connected dung o cac door trong cung `groupId`.
-- LevelComplete dung RPC neu door co `NetworkObject` de sync hieu ung door truot va player stick theo door.
+- `LevelComplete` bay gio chi quan ly visual hoan thanh cho player (slide door, disable movement) va restore player sau do, roi goi `LevelManager.LoadLevel()` de load scene tiep theo.
+- `LevelComplete` dung RPC neu door co `NetworkObject` de sync hieu ung door truot va player stick theo door.
 - `LevelCompleteDoorGroup` giup mot scene dung chung: single an Door_2, multiplayer hien ca hai door.
-- Host/server dieu khien scene transition.
+- `LevelManager` singleton - copy logic scene load tu `MainManager.StartGame`, ko animation ko fade. Neu host se dung `NetworkManager.SceneManager.LoadScene`, neu single dung `SceneManager.LoadScene`.
 
 ### Trap System
 
@@ -71,6 +72,8 @@ Dung de tao:
 - Button toggle.
 - Button hold cho co-op.
 - Single co the auto convert hold thanh press once.
+- `TrapButton` co the nhan them activator tag nhu `PushBlock` hoac `ButtonWeight`.
+- `PushBlock` la khoi vat ly player co the day de giu nut, co option dung ngang khi khong con bi day.
 
 ## Files Da Sua / Them
 
@@ -79,16 +82,19 @@ Dung de tao:
 | `Assets/Script/NetworkConfig.cs` | Da sua | Relay, services, NetworkManager persistence, single spawn |
 | `Assets/Script/manager/MainManager.cs` | Da sua | Menu, create/join room, dino select, start game |
 | `Assets/Script/LobbyManager.cs` | Dang dung | Sync lobby dino |
-| `Assets/Script/PlayerMovement.cs` | Da sua | Movement, jump, animation sync, mobile API |
+| `Assets/Script/PlayerMovement.cs` | Da sua | Movement, jump, animation sync, mobile API, no-friction collider |
 | `Assets/Script/PlayerSkinManager.cs` | Da sua | Sync selected dino skin |
 | `Assets/Script/PlayerSpawner.cs` | Da sua | Spawn only outside Menu, spawn validation |
 | `Assets/Script/KillZoneReload.cs` | Da sua | Host/server reload trong multiplayer |
 | `Assets/Script/LevelComplete.cs` | Da sua | Single 1 door, multi nhieu door cung group, player stick khong parent |
+| `Assets/Script/LevelManager.cs` | Moi | Simple scene load - copy StartGame logic, host use Netcode, single use local load |
+| `Assets/Script/SceneTransition.cs` | Moi | (Khong dung - deprecated) |
 | `Assets/Script/LevelCompleteDoorGroup.cs` | Moi | An/hien Door_2 tuy single/multiplayer |
 | `Assets/Script/MobileControlButton.cs` | Moi | Nut mobile UI |
 | `Assets/Script/TrapAction.cs` | Moi | Action chung cho trap |
 | `Assets/Script/TrapTrigger.cs` | Moi | Trigger chung cho trap |
 | `Assets/Script/TrapButton.cs` | Moi | Button trap press/toggle/hold |
+| `Assets/Script/PushBlock.cs` | Moi | Khoi vat ly de day va de nut |
 
 ## Nhung Dieu Can Canh Giac
 
@@ -151,6 +157,7 @@ Code mobile da co, nhung layout UI tren Android can test that:
 - [ ] DieZone reload ca team.
 - [ ] Button hold hoat dong trong multi.
 - [ ] Button hold auto thanh press once trong single neu bat option.
+- [ ] Push block day duoc va giu duoc nut hold.
 
 ### Android Test
 

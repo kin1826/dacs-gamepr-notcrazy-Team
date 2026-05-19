@@ -51,7 +51,7 @@ Gameplay hien tai tap trung vao:
 | `MainManager.cs` | Dieu khien UI menu, chon dino, tao/join phong, start game |
 | `LobbyManager.cs` | Sync dino host/client trong lobby |
 | `PlayerSpawner.cs` | Dat player vao spawn point dung trong level |
-| `PlayerMovement.cs` | Di chuyen, nhay, local-control fallback cho single, sync animation chay va huong nhin |
+| `PlayerMovement.cs` | Di chuyen, nhay, local-control fallback cho single, sync animation chay/huong nhin, giam dinh canh platform |
 | `PlayerSkinManager.cs` | Sync skin/mau dino cua moi player |
 | `MobileControlButton.cs` | Nut UI mobile de di trai/phai/nhay |
 | `KillZoneReload.cs` | Roi vao die zone thi reload scene |
@@ -60,6 +60,9 @@ Gameplay hien tai tap trung vao:
 | `TrapAction.cs` | Action chung cho trap: move, active object, collider, reload |
 | `TrapTrigger.cs` | Trigger kich hoat trap theo dieu kien |
 | `TrapButton.cs` | Nut bam trong level: press once, toggle, hold |
+| `PushBlock.cs` | Khoi day duoc de giu nut hold |
+| `LevelManager.cs` | Simple scene load - copy logic from MainManager.StartGame |
+| `SceneTransition.cs` | (Khong dung) |
 
 ## Trang Thai Hien Tai
 
@@ -79,6 +82,7 @@ Da hoat dong:
 - KillZone reload scene dung cho single/multi.
 - LevelComplete ho tro 1 scene dung chung: single an Door_2, multiplayer hien ca Door_1 va Door_2.
 - Trap system co ban da co code.
+- Push block co the giu nut hold neu dung tag `PushBlock` hoac `ButtonWeight`.
 
 Can tiep tuc lam:
 
@@ -117,9 +121,12 @@ Scene gameplay, vi du `Level_1`:
 - Gan `LevelComplete` vao ca `Door_1` va `Door_2`, cung `groupId`; multiplayer moi player dung 1 door moi complete.
 - Door multiplayer nen co `NetworkObject` de sync hieu ung truot/player stick.
 - Cac platform, trap, DieZone.
+- Push block nen co `Rigidbody2D`, `Collider2D`, `PushBlock`, va tag `PushBlock`/`ButtonWeight`.
+- Neu push block can sync trong multi, them `NetworkObject` va `NetworkTransform`.
 - Khong nen co player dat san trong scene.
 - Neu co `NetworkManager` duplicate trong level thi code se destroy duplicate, nhung cach sach hon la chi giu NetworkManager o `Menu`.
-
+- Kiem tra `Build Settings > Scenes In Build`: cac scene gameplay va menu phai duoc add va sap xep dung thu tu.
+- `LevelComplete` goi `LevelManager.Instance.LoadLevel(sceneName)` de load scene tiep theo. LevelManager copy logic tu `MainManager.StartGame`: host dung `NetworkManager.SceneManager.LoadScene`, single dung local `SceneManager.LoadScene`.
 ## Build Android
 
 Truoc khi build APK:

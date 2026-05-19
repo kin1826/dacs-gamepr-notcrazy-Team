@@ -40,11 +40,17 @@ public class PlatformSequence : NetworkBehaviour
     }
 
     /// <summary>
-    /// Server RPC to synchronize platform trigger across all 
+    /// Server RPC to synchronize platform trigger across all
+    /// clients via the server.
     /// </summary>
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    private void TriggerServerRpc()
+    [ServerRpc(RequireOwnership = false)]
+    private void TriggerServerRpc(ServerRpcParams rpcParams = default)
     {
+        if (!IsServer)
+        {
+            return;
+        }
+
         if (!isTriggered.Value)
         {
             isTriggered.Value = true;
