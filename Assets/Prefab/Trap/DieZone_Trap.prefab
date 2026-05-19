@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 3103994701789655711}
   - component: {fileID: 2552122275199683131}
   - component: {fileID: 3734106865846739846}
-  - component: {fileID: 8021145774521440178}
+  - component: {fileID: 4564605847124677507}
   - component: {fileID: 8653614765907472300}
   m_Layer: 0
   m_Name: DieZone_Rise
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de7b1b0f2b7b64489048ba2b6e33d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KillZoneReload
---- !u!114 &8021145774521440178
+--- !u!114 &4564605847124677507
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

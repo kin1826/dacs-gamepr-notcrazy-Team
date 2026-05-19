@@ -84,7 +84,12 @@ public class PlayerSkinManager : NetworkBehaviour
 
         ApplySkin(index);
 
-        if (IsSpawned && IsOwner)
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        if (IsSpawned)
         {
             SubmitSkinServerRpc(index);
         }

@@ -3056,6 +3056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d41321c4229a1c845a75938e6fe8d0f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteDoorGroup
+  ShowTopMostFoldoutHeaderGroup: 1
   primaryDoor: {fileID: 1918110767579593928}
   secondaryDoor: {fileID: 1885150939}
   hideSecondaryDoorInSingle: 1
@@ -3506,6 +3507,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 464159048
       objectReference: {fileID: 0}
+    - target: {fileID: 386032263053598630, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 246718320
+      objectReference: {fileID: 0}
     - target: {fileID: 5114713444923184481, guid: bb354356a740deb4787288a5b90bc865, type: 3}
       propertyPath: moveSpeed
       value: 10
@@ -3557,6 +3562,10 @@ PrefabInstance:
     - target: {fileID: 7846020405718265431, guid: bb354356a740deb4787288a5b90bc865, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 63979318
+      objectReference: {fileID: 0}
+    - target: {fileID: 7846020405718265431, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 246718320
       objectReference: {fileID: 0}
     - target: {fileID: 9182895234851583840, guid: bb354356a740deb4787288a5b90bc865, type: 3}
       propertyPath: m_LocalScale.x
@@ -4519,7 +4528,7 @@ PrefabInstance:
     - target: {fileID: 7346274542206598976, guid: 17d18a370350fa443bba7320676079d6, type: 3}
       propertyPath: 'actions.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4329256146809264338}
     - target: {fileID: 7346274542206598976, guid: 17d18a370350fa443bba7320676079d6, type: 3}
       propertyPath: autoConvertHoldInSingle
       value: 0
@@ -4543,6 +4552,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17d18a370350fa443bba7320676079d6, type: 3}
+--- !u!114 &4329256146809264338 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4334995070493197445, guid: 17d18a370350fa443bba7320676079d6, type: 3}
+  m_PrefabInstance: {fileID: 4329256146809264337}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d976a561c64457e46b35792904ea819b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapAction
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

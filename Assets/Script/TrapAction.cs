@@ -99,14 +99,24 @@ public class TrapAction : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void ActivateServerRpc()
+    private void ActivateServerRpc(ServerRpcParams rpcParams = default)
     {
+        if (!IsServer)
+        {
+            return;
+        }
+
         Activate();
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void DeactivateServerRpc()
+    private void DeactivateServerRpc(ServerRpcParams rpcParams = default)
     {
+        if (!IsServer)
+        {
+            return;
+        }
+
         Deactivate();
     }
 

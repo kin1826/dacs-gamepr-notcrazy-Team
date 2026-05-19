@@ -63,23 +63,20 @@ public class LevelComplete : NetworkBehaviour
             return;
         }
 
-        if (IsSpawned)
+        if (NetworkManager.Singleton == null)
         {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                MarkPlayerReady(playerNetworkObject.OwnerClientId, this);
-            }
-            else if (playerNetworkObject.IsOwner)
-            {
-                EnterExitServerRpc();
-            }
-
             return;
         }
 
         if (NetworkManager.Singleton.IsServer)
         {
             MarkPlayerReady(playerNetworkObject.OwnerClientId, this);
+            return;
+        }
+
+        if (playerNetworkObject.IsOwner)
+        {
+            EnterExitServerRpc();
         }
     }
 
@@ -95,23 +92,20 @@ public class LevelComplete : NetworkBehaviour
             return;
         }
 
-        if (IsSpawned)
+        if (NetworkManager.Singleton == null)
         {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                RemovePlayerReady(playerNetworkObject.OwnerClientId, this);
-            }
-            else if (playerNetworkObject.IsOwner)
-            {
-                ExitExitServerRpc();
-            }
-
             return;
         }
 
         if (NetworkManager.Singleton.IsServer)
         {
             RemovePlayerReady(playerNetworkObject.OwnerClientId, this);
+            return;
+        }
+
+        if (playerNetworkObject.IsOwner)
+        {
+            ExitExitServerRpc();
         }
     }
 

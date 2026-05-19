@@ -3,7 +3,7 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class TrapButton : MonoBehaviour
+public class TrapButton : NetworkBehaviour
 {
     public enum ButtonMode
     {
@@ -29,6 +29,9 @@ public class TrapButton : MonoBehaviour
     private bool pressedOnce;
     private bool toggledOn;
     private Vector3 visualStartLocalPosition;
+    private bool currentPressedState;
+
+    private NetworkVariable<bool> isPressed = new NetworkVariable<bool>(false);
 
     private void Awake()
     {
@@ -38,6 +41,25 @@ public class TrapButton : MonoBehaviour
         }
 
         visualStartLocalPosition = visual.localPosition;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        isPressed.OnValueChanged += OnPressedChanged;
+        UpdatePressedVisual(isPressed.Value);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        isPressed.OnValueChanged -= OnPressedChanged;
+        base.OnNetworkDespawn();
+    }
+
+    private void OnPressedChanged(bool oldValue, bool newValue)
+    {
+        currentPressedState = newValue;
+        UpdatePressedVisual(newValue);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -53,6 +75,13 @@ public class TrapButton : MonoBehaviour
         }
 
         activatorsHolding.Add(activatorId);
+
+        if (IsMultiplayer() && !IsServer && IsSpawned)
+        {
+            PressServerRpc();
+            return;
+        }
+
         Press();
     }
 
@@ -72,8 +101,36 @@ public class TrapButton : MonoBehaviour
 
         if (GetEffectiveMode() == ButtonMode.Hold && activatorsHolding.Count == 0)
         {
+            if (IsMultiplayer() && !IsServer && IsSpawned)
+            {
+                DeactivateServerRpc();
+                return;
+            }
+
             DeactivateActions();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void PressServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        Press();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DeactivateServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        DeactivateActions();
     }
 
     private void Press()
@@ -87,11 +144,13 @@ public class TrapButton : MonoBehaviour
                 }
 
                 pressedOnce = true;
+                isPressed.Value = true;
                 ActivateActions();
                 break;
 
             case ButtonMode.Toggle:
                 toggledOn = !toggledOn;
+                isPressed.Value = toggledOn;
                 StartCoroutine(PulsePressedVisual());
                 if (toggledOn)
                 {
@@ -104,6 +163,7 @@ public class TrapButton : MonoBehaviour
                 break;
 
             case ButtonMode.Hold:
+                isPressed.Value = true;
                 ActivateActions();
                 break;
         }
@@ -124,7 +184,11 @@ public class TrapButton : MonoBehaviour
     {
         if (GetEffectiveMode() != ButtonMode.Toggle)
         {
-            SetPressedVisual(true);
+            isPressed.Value = true;
+        }
+        else
+        {
+            isPressed.Value = toggledOn;
         }
 
         foreach (TrapAction action in actions)
@@ -140,7 +204,7 @@ public class TrapButton : MonoBehaviour
     {
         if (GetEffectiveMode() != ButtonMode.Toggle)
         {
-            SetPressedVisual(false);
+            isPressed.Value = false;
         }
 
         foreach (TrapAction action in actions)
@@ -199,6 +263,11 @@ public class TrapButton : MonoBehaviour
         );
     }
 
+    private bool IsMultiplayer()
+    {
+        return NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient;
+    }
+
     private void SetPressedVisual(bool isPressed)
     {
         if (visual == null)
@@ -207,6 +276,12 @@ public class TrapButton : MonoBehaviour
         }
 
         visual.localPosition = visualStartLocalPosition + (isPressed ? new Vector3(0f, pressedYOffset, 0f) : Vector3.zero);
+    }
+
+    private void UpdatePressedVisual(bool pressed)
+    {
+        currentPressedState = pressed;
+        SetPressedVisual(pressed);
     }
 
     private IEnumerator PulsePressedVisual()
