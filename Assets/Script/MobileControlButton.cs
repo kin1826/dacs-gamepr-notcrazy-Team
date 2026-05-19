@@ -15,7 +15,7 @@ public class MobileControlButton : MonoBehaviour, IPointerDownHandler, IPointerU
     public void OnPointerDown(PointerEventData eventData)
     {
         PlayerMovement player = PlayerMovement.LocalPlayer;
-        if (player == null) return;
+        if (player == null || !player.IsOwner) return;
 
         switch (action)
         {
@@ -46,7 +46,7 @@ public class MobileControlButton : MonoBehaviour, IPointerDownHandler, IPointerU
         if (action == ControlAction.Jump) return;
 
         PlayerMovement player = PlayerMovement.LocalPlayer;
-        if (player == null) return;
+        if (player == null || !player.IsOwner) return;
 
         player.MoveStop();
     }

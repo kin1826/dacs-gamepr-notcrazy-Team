@@ -129,11 +129,12 @@ public class TrapTrigger : MonoBehaviour
         }
 
         NetworkObject networkObject = collision.GetComponentInParent<NetworkObject>();
-        if (networkObject != null)
+        if (networkObject == null)
         {
-            clientId = networkObject.OwnerClientId;
+            return false;
         }
 
+        clientId = networkObject.OwnerClientId;
         return true;
     }
 }

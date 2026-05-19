@@ -117,7 +117,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         moveInput = input;
 
-        if (IsMultiplayer())
+        if (IsMultiplayer() && IsOwner)
         {
             SubmitMovementServerRpc(moveInput);
         }
@@ -125,6 +125,16 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Jump()
     {
+        if (IsMultiplayer() && !IsOwner)
+        {
+            return;
+        }
+
+        if (rb == null)
+        {
+            return;
+        }
+
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
 
