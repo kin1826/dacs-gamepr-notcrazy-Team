@@ -17,6 +17,7 @@ public class MainManager : MonoBehaviour
     public GameObject mainPanel;
     public GameObject multiplayerPanel;
     public GameObject dinoSelectPanel;
+    public GameObject levelSelectPanel;
 
     [Header("Scene")]
     public string gameplaySceneName = "Level_01";
@@ -50,6 +51,8 @@ public class MainManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        SaveManager.Load();
     }
 
     private void Start()
@@ -70,17 +73,17 @@ public class MainManager : MonoBehaviour
     /// </summary>
     private void ValidateReferences()
     {
-        if (mainPanel == null) Debug.LogError("MainManager: mainPanel not assigned!");
-        if (multiplayerPanel == null) Debug.LogError("MainManager: multiplayerPanel not assigned!");
-        if (dinoSelectPanel == null) Debug.LogError("MainManager: dinoSelectPanel not assigned!");
-        if (dinoSprites == null || dinoSprites.Length == 0) Debug.LogError("MainManager: dinoSprites not assigned!");
-        if (leftDinoImage == null) Debug.LogError("MainManager: leftDinoImage not assigned!");
-        if (rightDinoImage == null) Debug.LogError("MainManager: rightDinoImage not assigned!");
-        if (createCodeButton == null) Debug.LogError("MainManager: createCodeButton not assigned!");
-        if (joinRoomButton == null) Debug.LogError("MainManager: joinRoomButton not assigned!");
-        if (playButton == null) Debug.LogError("MainManager: playButton not assigned!");
-        if (roomCodeInput == null) Debug.LogError("MainManager: roomCodeInput not assigned!");
-        if (codeDisplayInput == null) Debug.LogError("MainManager: codeDisplayInput not assigned!");
+        // if (mainPanel == null) Debug.LogError("MainManager: mainPanel not assigned!");
+        // if (multiplayerPanel == null) Debug.LogError("MainManager: multiplayerPanel not assigned!");
+        // if (dinoSelectPanel == null) Debug.LogError("MainManager: dinoSelectPanel not assigned!");
+        // if (dinoSprites == null || dinoSprites.Length == 0) Debug.LogError("MainManager: dinoSprites not assigned!");
+        // if (leftDinoImage == null) Debug.LogError("MainManager: leftDinoImage not assigned!");
+        // if (rightDinoImage == null) Debug.LogError("MainManager: rightDinoImage not assigned!");
+        // if (createCodeButton == null) Debug.LogError("MainManager: createCodeButton not assigned!");
+        // if (joinRoomButton == null) Debug.LogError("MainManager: joinRoomButton not assigned!");
+        // if (playButton == null) Debug.LogError("MainManager: playButton not assigned!");
+        // if (roomCodeInput == null) Debug.LogError("MainManager: roomCodeInput not assigned!");
+        // if (codeDisplayInput == null) Debug.LogError("MainManager: codeDisplayInput not assigned!");
     }
 
     private void Update()
@@ -94,6 +97,9 @@ public class MainManager : MonoBehaviour
 
     public void StartGame()
     {
+        gameplaySceneName = $"Level_{GameData.SelectedLevel:00}";
+        Debug.Log($"MainManager: StartGame with scene {gameplaySceneName}");
+
         if (string.IsNullOrEmpty(gameplaySceneName))
         {
             Debug.LogError("gameplaySceneName not set!");
@@ -174,6 +180,11 @@ public class MainManager : MonoBehaviour
         multiplayerPanel.SetActive(true);
     }
 
+    public void OpenLevelSelect()
+    {
+        levelSelectPanel.SetActive(true);
+    }
+
     // =========================
     // CREATE ROOM
     // =========================
@@ -208,6 +219,8 @@ public class MainManager : MonoBehaviour
         {
             Debug.LogError($"Failed to create room: {ex.Message}");
         }
+
+        LobbyManager.Instance?.SetMinLevelRpc(SaveManager.Data.highestLevel);
     }
 
     // =========================
@@ -226,9 +239,15 @@ public class MainManager : MonoBehaviour
         if (!GameData.IsMultiplayer)
         {
             GameData.SelectedDino = index;
+
+            //Save
+            SaveManager.Data.selectedDino =index;
+            SaveManager.Save();
+
             PlayerSkinManager.LocalPlayer?.SetSkin(index);
             Debug.Log($"Single player selected dino: {index}");
-            StartGame();
+            OpenLevelSelect();
+            // StartGame();
             return;
         }
 
@@ -264,13 +283,17 @@ public class MainManager : MonoBehaviour
                 return;
             }
 
-            LobbyManager.Instance.SetClientDinoRpc(index);
+            LobbyManager.Instance.SetClientDinoRpc(index);          
             rightDinoImage.sprite = dinoSprites[index];
             rightDinoImage.gameObject.SetActive(true);
             dinoSelectPanel.SetActive(false);
             playButton.interactable = false;
             Debug.Log($"Client selected dino: {index}");
             UpdateRoomUI();
+
+            LobbyManager.Instance?.SetMinLevelRpc(SaveManager.Data.highestLevel);
+
+            LevelSelectManager.Instance?.GenerateAgain();
         }
     }
     // =========================
@@ -321,6 +344,10 @@ public class MainManager : MonoBehaviour
         Debug.Log("Close Multi");
 
         mainPanel.SetActive(true);
+    }
+    public void CloseLevelSelectPanel()
+    {
+        levelSelectPanel.SetActive(false);
     }
 
     // =========================
@@ -407,6 +434,8 @@ public class MainManager : MonoBehaviour
         {
             Debug.LogError($"Failed to join room: {ex.Message}");
         }
+
+       
     }
 
     /// <summary>
