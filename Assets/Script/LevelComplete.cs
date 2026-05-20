@@ -109,6 +109,18 @@ public class LevelComplete : NetworkBehaviour
         }
     }
 
+    public void SavePlayerDone()
+    {
+        int next = GameData.SelectedLevel + 1;
+
+        if(next > SaveManager.Data.highestLevel)
+        {
+            SaveManager.Data.highestLevel = next;
+
+            SaveManager.Save();
+        }
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void EnterExitServerRpc(ServerRpcParams rpcParams = default)
     {
@@ -298,6 +310,7 @@ public class LevelComplete : NetworkBehaviour
         }
 
         Debug.Log($"LevelComplete: Loading level '{target}'");
+        SavePlayerDone();
         LevelManager.Instance.LoadLevel(target);
 
         yield break;
