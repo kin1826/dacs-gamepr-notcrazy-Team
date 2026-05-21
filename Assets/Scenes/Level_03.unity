@@ -658,6 +658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobileControlButton
   action: 1
+  debugLogs: 0
 --- !u!114 &338506275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2652,6 +2653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobileControlButton
   action: 2
+  debugLogs: 0
 --- !u!114 &841233314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3445,6 +3447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobileControlButton
   action: 0
+  debugLogs: 0
 --- !u!1 &1249653948
 GameObject:
   m_ObjectHideFlags: 0
@@ -4114,7 +4117,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2552100172092070211, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: groupId
-      value: level1_exit
+      value: level3_exit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2552100172092070211, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: nextSceneName
+      value: Level_04
       objectReference: {fileID: 0}
     - target: {fileID: 7814348554962909845, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Name
@@ -4322,7 +4329,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2552100172092070211, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: groupId
-      value: level1_exit
+      value: level3_exit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2552100172092070211, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: nextSceneName
+      value: Level_04
       objectReference: {fileID: 0}
     - target: {fileID: 7814348554962909845, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Name
