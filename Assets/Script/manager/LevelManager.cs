@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -53,4 +54,5 @@ public class LevelManager : MonoBehaviour
             SceneManager.LoadScene(sceneName);
         }
     }
+
 }
