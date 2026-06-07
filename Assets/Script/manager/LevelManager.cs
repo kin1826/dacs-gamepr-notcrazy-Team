@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -14,14 +13,14 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        // if (Instance != null && Instance != this)
-        // {
-        //     Destroy(gameObject);
-        //     return;
-        // }
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        // Instance = this;
-        // DontDestroyOnLoad(gameObject);
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>

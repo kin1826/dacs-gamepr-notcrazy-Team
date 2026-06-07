@@ -175,7 +175,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6392157, g: 0.3647059, b: 0, a: 1}
+  m_Color: {r: 0.38431376, g: 0.078431375, b: 0.627451, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0f62f20c57ca274b889e135b11e3edf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrapButton
+  ShowTopMostFoldoutHeaderGroup: 1
   buttonMode: 1
   autoConvertHoldInSingle: 1
   extraActivatorTags:
@@ -263,9 +264,9 @@ GameObject:
   - component: {fileID: 8709531096784637528}
   - component: {fileID: 5962729994857481946}
   - component: {fileID: 2925773746415454013}
+  - component: {fileID: 6989666014518742460}
   - component: {fileID: 4334995070493197445}
   - component: {fileID: 346006860772082915}
-  - component: {fileID: 6989666014518742460}
   m_Layer: 6
   m_Name: Platform
   m_TagString: Platform
@@ -338,7 +339,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9960785, g: 0.65882355, b: 0.20784315, a: 1}
+  m_Color: {r: 0.22745098, g: 0.0627451, b: 0.3764706, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -393,6 +394,31 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &6989666014518742460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7156258939729662426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 4152148576
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &4334995070493197445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437,31 +463,6 @@ MonoBehaviour:
   activeState: 1
   targetCollider: {fileID: 0}
   colliderState: 1
---- !u!114 &6989666014518742460
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7156258939729662426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4152148576
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!1 &7690238726795763377
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,15 +644,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5644004795068741696, guid: f46ba49afdbc71640a7606c3ed37e7d9, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.6301887
       objectReference: {fileID: 0}
     - target: {fileID: 5644004795068741696, guid: f46ba49afdbc71640a7606c3ed37e7d9, type: 3}
       propertyPath: m_Color.g
-      value: 0.36521578
+      value: 0.07966535
       objectReference: {fileID: 0}
     - target: {fileID: 5644004795068741696, guid: f46ba49afdbc71640a7606c3ed37e7d9, type: 3}
       propertyPath: m_Color.r
-      value: 0.6415094
+      value: 0.38477468
       objectReference: {fileID: 0}
     - target: {fileID: 6277742326394259897, guid: f46ba49afdbc71640a7606c3ed37e7d9, type: 3}
       propertyPath: 'actions.Array.data[0]'
