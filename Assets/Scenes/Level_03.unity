@@ -2178,7 +2178,7 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {r: 4.5e-44, g: 4.5e-44, b: 4.5e-44, a: 4.5e-44}
   - m_RefCount: 128
-    m_Data: {r: 0.22745098, g: 0.0627451, b: 0.3764706, a: 1}
+    m_Data: {r: 0.41960785, g: 0.07058824, b: 0.007843138, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2259,6 +2259,18 @@ PrefabInstance:
     - target: {fileID: 4810023708788044974, guid: 55909a122a9d02d42bfc285462e8bbed, type: 3}
       propertyPath: m_Name
       value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 8188264203081840054, guid: 55909a122a9d02d42bfc285462e8bbed, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8188264203081840054, guid: 55909a122a9d02d42bfc285462e8bbed, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.67058825
+      objectReference: {fileID: 0}
+    - target: {fileID: 8188264203081840054, guid: 55909a122a9d02d42bfc285462e8bbed, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.99607843
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

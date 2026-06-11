@@ -30,7 +30,6 @@ public class MainManager : MonoBehaviour
     public Image rightDinoImage;
 
     [Header("Buttons")]
-    public Button createCodeButton;
     public Button joinRoomButton;
     public Button playButton;
 
@@ -40,6 +39,10 @@ public class MainManager : MonoBehaviour
     [Header("Join")]
     public TMP_InputField roomCodeInput;
     public TMP_InputField codeDisplayInput;
+
+    [Header("Audio")]
+    public int lobbyMusicIndex = 0;
+    public AudioClip clickSFX;
 
     private void Awake()
     {
@@ -60,12 +63,13 @@ public class MainManager : MonoBehaviour
         NetworkConfig.EnsureInstance();
         ValidateReferences();
 
-        createCodeButton.interactable = false;
         joinRoomButton.interactable = true;
         playButton.interactable = false;
 
         leftDinoImage.gameObject.SetActive(false);
         rightDinoImage.gameObject.SetActive(false);
+
+        AudioManager.Instance?.PlayMusic(lobbyMusicIndex);
     }
 
     /// <summary>
@@ -159,13 +163,22 @@ public class MainManager : MonoBehaviour
     }
 
     // =========================
+    // AUDIO
+    // =========================
+    public void PlayClick()
+    {
+        if (clickSFX != null)
+            AudioManager.Instance?.PlaySFX(clickSFX);
+    }
+
+    // =========================
     // SINGLE PLAYER
     // =========================
     public void OpenSinglePlayer()
     {
         GameData.IsMultiplayer = false;
 
-        mainPanel.SetActive(false);
+        // mainPanel.SetActive(false);
         dinoSelectPanel.SetActive(true);
     }
 
@@ -176,7 +189,7 @@ public class MainManager : MonoBehaviour
     {
         GameData.IsMultiplayer = true;
 
-        mainPanel.SetActive(false);
+        // mainPanel.SetActive(false);
         multiplayerPanel.SetActive(true);
     }
 
@@ -267,7 +280,6 @@ public class MainManager : MonoBehaviour
             leftDinoImage.sprite = dinoSprites[index];
             leftDinoImage.gameObject.SetActive(true);
             dinoSelectPanel.SetActive(false);
-            createCodeButton.interactable = true;
             playButton.interactable = false;
             Debug.Log($"Host selected dino: {index}");
         }

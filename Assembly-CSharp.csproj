@@ -57,9 +57,11 @@
     <Compile Include="Assets\Script\TriggerZone.cs" />
     <Compile Include="Assets\Script\core\GameData.cs" />
     <Compile Include="Assets\Script\TrapAction.cs" />
+    <Compile Include="Assets\Script\utils\MuteButton.cs" />
     <Compile Include="Assets\Script\LevelButton.cs" />
     <Compile Include="Assets\Script\TrapButton.cs" />
     <Compile Include="Assets\Script\utils\ButtonPressEffect.cs" />
+    <Compile Include="Assets\Script\manager\AudioManager.cs" />
     <Compile Include="Assets\Script\NetworkUI.cs" />
     <Compile Include="Assets\Script\PlayerSpawner.cs" />
     <Compile Include="Assets\Script\core\SaveManager.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Assets\Script\KillZoneReload.cs" />
     <Compile Include="Assets\Script\PlatformSequence.cs" />
     <Compile Include="Assets\Script\PushBlock.cs" />
+    <Compile Include="Assets\Script\utils\ClickSFX.cs" />
     <Compile Include="Assets\Script\TrapTrigger.cs" />
     <Compile Include="Assets\Script\LevelComplete.cs" />
     <Compile Include="Assets\Script\LevelSelectManager.cs" />

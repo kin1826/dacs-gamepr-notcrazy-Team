@@ -108,23 +108,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4027605426322967472, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.17254902
       objectReference: {fileID: 0}
     - target: {fileID: 4027605426322967472, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.g
-      value: 0.8392157
+      value: 0.30980393
       objectReference: {fileID: 0}
     - target: {fileID: 4027605426322967472, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: m_Color.r
+      value: 0.8235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5801887
+      objectReference: {fileID: 0}
+    - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: m_Color.g
+      value: 0.66536784
+      objectReference: {fileID: 0}
+    - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.r
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
-      propertyPath: m_Color.g
-      value: 0.4862745
-      objectReference: {fileID: 0}
-    - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
-      propertyPath: m_Color.r
-      value: 0.9607843
       objectReference: {fileID: 0}
     - target: {fileID: 7814348554962909845, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Name
@@ -160,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2507136089
+  GlobalObjectIdHash: 333099710
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -230,20 +234,28 @@ PrefabInstance:
       value: Level_02
       objectReference: {fileID: 0}
     - target: {fileID: 4027605426322967472, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: m_Color.b
+      value: 0.17254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 4027605426322967472, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.g
-      value: 0.8392157
+      value: 0.30980393
       objectReference: {fileID: 0}
     - target: {fileID: 4027605426322967472, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0.8235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5801887
       objectReference: {fileID: 0}
     - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.g
-      value: 0.4862745
+      value: 0.66536784
       objectReference: {fileID: 0}
     - target: {fileID: 4450630603894493116, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Color.r
-      value: 0.9607843
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7814348554962909845, guid: 4569fa1968fb7c745ab94ea169b3e5d2, type: 3}
       propertyPath: m_Name
