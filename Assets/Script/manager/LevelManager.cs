@@ -23,6 +23,38 @@ public class LevelManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+    }
+
+    private void OnClientDisconnected(ulong clientId)
+    {
+        // Chỉ xử lý khi đang ở multiplayer và không phải ở Menu
+        if (!GameData.IsMultiplayer) return;
+        if (SceneManager.GetActiveScene().name == "Menu") return;
+
+        bool isLocalClient = NetworkManager.Singleton != null
+            && clientId == NetworkManager.Singleton.LocalClientId;
+
+        // Client bị kick (host tắt) → tự về Menu
+        if (isLocalClient)
+        {
+            SceneManager.LoadScene("Menu");
+        }
+    }
+
     /// <summary>
     /// Load a scene using the same logic as MainManager.StartGame.
     /// </summary>
