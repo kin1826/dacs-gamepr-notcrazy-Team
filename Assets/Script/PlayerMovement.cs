@@ -116,32 +116,13 @@ public class PlayerMovement : NetworkBehaviour
     private void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-
-        if (IsMultiplayer() && IsOwner)
-        {
-            SubmitMovementServerRpc(moveInput);
-        }
     }
 
     private void Jump()
     {
-        if (IsMultiplayer() && !IsOwner)
-        {
-            return;
-        }
-
-        if (rb == null)
-        {
-            return;
-        }
-
+        if (IsMultiplayer() && !IsOwner) return;
+        if (rb == null) return;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-    }
-
-    [ServerRpc]
-    private void SubmitMovementServerRpc(Vector2 input)
-    {
-        moveInput = input;
     }
 
     private void Update()
@@ -191,6 +172,28 @@ public class PlayerMovement : NetworkBehaviour
         if (rb == null) return;
 
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+    }
+
+    // Called by KillZoneReload on the owning client to immediately trigger a server-side
+    // scene reload without waiting for NetworkTransform lag (~50-100ms).
+    [ServerRpc]
+    public void RequestKillZoneReloadServerRpc()
+    {
+        if (!IsServer) return;
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
+            UnityEngine.SceneManagement.LoadSceneMode.Single);
+    }
+
+    // Relay used by LevelComplete when it doesn't have a NetworkObject component.
+    // Client calls this from OnTriggerEnter/Exit; server forwards to LevelComplete.
+    [ServerRpc]
+    public void NotifyLevelExitServerRpc(string groupId, bool isEntering, ServerRpcParams rpcParams = default)
+    {
+        if (isEntering)
+            LevelComplete.ServerHandlePlayerEnter(rpcParams.Receive.SenderClientId, groupId);
+        else
+            LevelComplete.ServerHandlePlayerExit(rpcParams.Receive.SenderClientId, groupId);
     }
 
     [ServerRpc]
