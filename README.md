@@ -30,12 +30,16 @@ Assets/Script/
 │   └── NetworkErrorHandler.cs
 │
 ├── manager/            # Quản lý flow game
-│   ├── MainManager.cs      — UI flow: menu, chọn nhân vật, tạo/join phòng
+│   ├── MainManager.cs      — UI flow: menu, chọn nhân vật, tạo/join phòng, phát nhạc lobby
 │   ├── LobbyManager.cs     — Đồng bộ lobby qua NetworkVariable
-│   └── LevelManager.cs     — Tải scene (hỗ trợ cả SP và MP)
+│   ├── LevelManager.cs     — Tải scene (hỗ trợ cả SP và MP), xử lý host disconnect
+│   └── AudioManager.cs     — Quản lý nhạc nền và sound effect (singleton)
 │
 ├── utils/
-│   └── ColorConfig.cs
+│   ├── ColorConfig.cs
+│   ├── ButtonPressEffect.cs — Hiệu ứng co padding frame khi nhấn button
+│   ├── ClickSFX.cs          — Phát SFX mỗi khi click chuột (global)
+│   └── MuteButton.cs        — Toggle mute all + đổi icon âm thanh
 │
 ├── PlayerMovement.cs       — Di chuyển & nhảy (Physics + Network sync)
 ├── PlayerSkinManager.cs    — Đổi skin nhân vật, đồng bộ qua mạng
@@ -142,7 +146,30 @@ Các loại hành động bẫy:
 - Đổi skin realtime, đồng bộ qua `NetworkVariable<int>`
 - Skin được lưu vào save file và tự động áp dụng khi vào game
 
-### 8. Lưu trữ dữ liệu (`SaveManager.cs`, `SaveData.cs`)
+### 8. Hệ thống âm thanh (`AudioManager.cs`)
+- Singleton, chỉ sống trong scene Menu/Lobby (không DontDestroyOnLoad)
+- **Nhạc nền:** loop tự động, `MainManager.Start()` gọi `PlayMusic(lobbyMusicIndex)`
+- **SFX:** dùng `PlayOneShot` → nhiều SFX chồng nhau cùng lúc
+- `ClickSFX.cs` — attach vào scene, phát SFX mỗi khi `Input.GetMouseButtonDown(0)`
+- `MuteButton.cs` — toggle tắt/bật toàn bộ âm thanh, tự đổi icon
+
+### 9. Pause / Exit trong gameplay (`FunctionPanelController.cs`)
+Kiểm tra `GameData.IsMultiplayer` để quyết định hành vi:
+
+| Chế độ | Bấm nút | Kết quả |
+|--------|---------|---------|
+| Single | Pause | Hiện `pausePanel`, `Time.timeScale = 0` |
+| Single | Resume | Ẩn panel, `Time.timeScale = 1` |
+| Single | Restart | Reload scene hiện tại |
+| Single | MainMenu | Load scene Menu |
+| Multi | Nút Exit | Hiện `confirmPanel`, game không dừng |
+| Multi | Cancel | Ẩn confirmPanel |
+| Multi | ConfirmExit | `NetworkManager.Shutdown()` → về Menu |
+
+- Icon nút tự đổi theo chế độ: `iconSingle` / `iconMulti` (set trong `Start()`)
+- Khi **host tắt**, `LevelManager.OnClientDisconnected` detect → client tự `SceneManager.LoadScene("Menu")`
+
+### 10. Lưu trữ dữ liệu (`SaveManager.cs`, `SaveData.cs`)
 ```csharp
 public class SaveData {
     public int highestLevel = 1;   // Level cao nhất đã hoàn thành
@@ -228,7 +255,24 @@ HOST (Server + Client)              CLIENT
 3. **NetworkVariable** chỉ được ghi từ Server
 4. **LobbyManager** dùng `DontDestroyOnLoad` — cẩn thận duplicate khi reload scene
 5. **KillZone** hiện tại reload ngay khi **bất kỳ** player chạm — có thể ảnh hưởng cả 2 người chơi trong multiplayer
+6. **ServerRpc không thể gọi từ MonoBehaviour chưa được spawn** — nếu cần gọi RPC từ UI, phải relay qua một NetworkBehaviour đã spawn (ví dụ `PlayerMovement.LocalPlayer`)
+7. **AudioManager không DontDestroyOnLoad** — chỉ tồn tại trong scene Menu, không phát nhạc khi trong level
 
 ---
 
-*Tài liệu được tạo tự động từ source code — cập nhật lần cuối: 2026-05-27*
+## 🔧 Lịch sử thay đổi
+
+### 2026-06-11
+- **Fix:** `Level_02.unity` bị duplicate identifier `1576777005` do merge conflict → restore từ commit `85d0397`
+- **Fix:** `LevelManager` singleton bị comment out → `Instance` luôn null → `NullReferenceException` trong `LevelComplete`
+- **Thêm:** `AudioManager.cs` — quản lý nhạc nền và SFX
+- **Thêm:** `ButtonPressEffect.cs` — hiệu ứng co padding frame khi nhấn button
+- **Thêm:** `ClickSFX.cs` — phát SFX toàn cục khi click chuột
+- **Thêm:** `MuteButton.cs` — toggle mute + đổi icon
+- **Sửa:** `MainManager.cs` — tích hợp AudioManager, phát nhạc lobby khi Start
+- **Sửa:** `FunctionPanelController.cs` — logic Pause/Exit theo Single/Multi, confirmPanel, icon đổi theo chế độ
+- **Sửa:** `LevelManager.cs` — đăng ký `OnClientDisconnectCallback`, tự về Menu khi host disconnect
+
+---
+
+*Cập nhật lần cuối: 2026-06-11*

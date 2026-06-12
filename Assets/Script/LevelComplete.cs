@@ -12,6 +12,8 @@ public class LevelComplete : NetworkBehaviour
     public float delayBeforeLoad = 1.5f;
     public string nextSceneName = "";
 
+    public static bool IsCompleting { get; private set; }
+
     private static readonly Dictionary<string, Dictionary<ulong, LevelComplete>> ReadyByGroup = new Dictionary<string, Dictionary<ulong, LevelComplete>>();
     private static readonly HashSet<string> CompletingGroups = new HashSet<string>();
 
@@ -23,6 +25,8 @@ public class LevelComplete : NetworkBehaviour
 
     private void OnDestroy()
     {
+        IsCompleting = false;
+
         if (!ReadyByGroup.TryGetValue(groupId, out Dictionary<ulong, LevelComplete> readyPlayers))
         {
             return;
@@ -76,7 +80,13 @@ public class LevelComplete : NetworkBehaviour
 
         if (playerNetworkObject.IsOwner)
         {
-            EnterExitServerRpc();
+            // If this LevelComplete is a spawned NetworkObject, send RPC directly.
+            // Otherwise relay through the player's own NetworkObject (always spawned).
+            if (IsSpawned)
+                EnterExitServerRpc();
+            else
+                playerNetworkObject.GetComponent<PlayerMovement>()
+                    ?.NotifyLevelExitServerRpc(groupId, true);
         }
     }
 
@@ -105,7 +115,11 @@ public class LevelComplete : NetworkBehaviour
 
         if (playerNetworkObject.IsOwner)
         {
-            ExitExitServerRpc();
+            if (IsSpawned)
+                ExitExitServerRpc();
+            else
+                playerNetworkObject.GetComponent<PlayerMovement>()
+                    ?.NotifyLevelExitServerRpc(groupId, false);
         }
     }
 
@@ -133,18 +147,40 @@ public class LevelComplete : NetworkBehaviour
         RemovePlayerReady(rpcParams.Receive.SenderClientId, this);
     }
 
+    // Called by PlayerMovement.NotifyLevelExitServerRpc when LevelComplete is not a NetworkObject.
+    public static void ServerHandlePlayerEnter(ulong clientId, string groupId)
+    {
+        LevelComplete[] exits = Object.FindObjectsByType<LevelComplete>(FindObjectsSortMode.None);
+        foreach (LevelComplete exit in exits)
+        {
+            if (exit.groupId == groupId)
+            {
+                MarkPlayerReady(clientId, exit);
+                return;
+            }
+        }
+        Debug.LogWarning($"LevelComplete.ServerHandlePlayerEnter: no exit found for groupId '{groupId}'");
+    }
+
+    public static void ServerHandlePlayerExit(ulong clientId, string groupId)
+    {
+        LevelComplete[] exits = Object.FindObjectsByType<LevelComplete>(FindObjectsSortMode.None);
+        foreach (LevelComplete exit in exits)
+        {
+            if (exit.groupId == groupId)
+            {
+                RemovePlayerReady(clientId, exit);
+                return;
+            }
+        }
+    }
+
     private static void MarkPlayerReady(ulong clientId, LevelComplete exit)
     {
         if (!ReadyByGroup.TryGetValue(exit.groupId, out Dictionary<ulong, LevelComplete> readyPlayers))
         {
             readyPlayers = new Dictionary<ulong, LevelComplete>();
             ReadyByGroup.Add(exit.groupId, readyPlayers);
-        }
-
-        if (readyPlayers.ContainsValue(exit) && !readyPlayers.ContainsKey(clientId))
-        {
-            Debug.Log("This exit already has another player waiting.");
-            return;
         }
 
         readyPlayers[clientId] = exit;
@@ -174,9 +210,11 @@ public class LevelComplete : NetworkBehaviour
     {
         if (CompletingGroups.Contains(groupId))
         {
+            Debug.Log($"LevelComplete: StartGroupCompletion skipped — group '{groupId}' already completing.");
             return;
         }
 
+        Debug.Log($"LevelComplete: All {readyPlayers.Count} players ready. Starting group completion for '{groupId}'.");
         CompletingGroups.Add(groupId);
 
         LevelComplete loadOwner = null;
@@ -190,7 +228,9 @@ public class LevelComplete : NetworkBehaviour
             pair.Value.StartCompletionForPlayer(pair.Key);
         }
 
-        if (loadOwner != null && loadOwner.NetworkManager != null && loadOwner.NetworkManager.IsServer)
+        // Use NetworkManager.Singleton instead of loadOwner.NetworkManager —
+        // loadOwner.NetworkManager is null if the GameObject lacks a NetworkObject component.
+        if (loadOwner != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
         {
             loadOwner.StartCoroutine(loadOwner.LoadNextSceneAfterDelay());
         }
@@ -229,6 +269,7 @@ public class LevelComplete : NetworkBehaviour
         }
 
         activated = true;
+        IsCompleting = true;
         player = targetPlayer;
 
         player.position = new Vector3(transform.position.x, player.position.y, player.position.z);
@@ -311,6 +352,13 @@ public class LevelComplete : NetworkBehaviour
 
         Debug.Log($"LevelComplete: Loading level '{target}'");
         SavePlayerDone();
+
+        if (LevelManager.Instance == null)
+        {
+            Debug.LogError("LevelComplete: LevelManager.Instance is null — cannot load next scene.");
+            yield break;
+        }
+
         LevelManager.Instance.LoadLevel(target);
 
         yield break;

@@ -67,11 +67,15 @@
     <Compile Include="Assets\Script\core\SaveManager.cs" />
     <Compile Include="Assets\Script\manager\MainManager.cs" />
     <Compile Include="Assets\Script\SceneTransition.cs" />
+    <Compile Include="Assets\Script\API\ApiModels.cs" />
+    <Compile Include="Assets\Script\manager\ApiManager.cs" />
     <Compile Include="Assets\Script\manager\LevelManager.cs" />
     <Compile Include="Assets\Script\KillZoneReload.cs" />
     <Compile Include="Assets\Script\PlatformSequence.cs" />
+    <Compile Include="Assets\Script\UI\AuthUIManager.cs" />
     <Compile Include="Assets\Script\PushBlock.cs" />
     <Compile Include="Assets\Script\utils\ClickSFX.cs" />
+    <Compile Include="Assets\Script\core\UserSession.cs" />
     <Compile Include="Assets\Script\TrapTrigger.cs" />
     <Compile Include="Assets\Script\LevelComplete.cs" />
     <Compile Include="Assets\Script\LevelSelectManager.cs" />

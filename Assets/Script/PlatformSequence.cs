@@ -1,10 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
 
-/// <summary>
-/// Network-aware platform that moves to target position when triggered.
-/// All clients see the same platform animation synchronized via NetworkVariable.
-/// </summary>
 public class PlatformSequence : NetworkBehaviour
 {
     public Transform platform;
@@ -13,8 +9,70 @@ public class PlatformSequence : NetworkBehaviour
 
     private NetworkVariable<bool> isTriggered = new NetworkVariable<bool>(false);
 
+    private NetworkVariable<Vector3> syncedPosition = new NetworkVariable<Vector3>(
+        Vector3.zero,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
+    private Vector3 startPosition;
+
+    // Client-side smoothing target — updated when NetworkVariable changes.
+    private Vector3 clientTargetPosition;
+
+    private void Awake()
+    {
+        if (platform != null)
+            startPosition = platform.position;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        syncedPosition.OnValueChanged += OnSyncedPositionChanged;
+
+        if (IsServer)
+        {
+            syncedPosition.Value = startPosition;
+        }
+        else
+        {
+            // Use scene-baked startPosition — syncedPosition.Value may still be
+            // Vector3.zero if the server's initial tick hasn't arrived yet.
+            clientTargetPosition = startPosition;
+            if (platform != null)
+                platform.position = startPosition;
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        syncedPosition.OnValueChanged -= OnSyncedPositionChanged;
+    }
+
+    private void OnSyncedPositionChanged(Vector3 _, Vector3 newPos)
+    {
+        if (IsServer) return;
+        // Update target only — do NOT set position directly.
+        clientTargetPosition = newPos;
+    }
+
     void Update()
     {
+        if (IsSpawned && !IsServer)
+        {
+            // Client: smooth movement toward server's position.
+            if (platform != null)
+            {
+                platform.position = Vector3.MoveTowards(
+                    platform.position,
+                    clientTargetPosition,
+                    speed * Time.deltaTime
+                );
+            }
+            return;
+        }
+
+        // Server: authoritative movement.
         if (!isTriggered.Value) return;
 
         platform.position = Vector2.MoveTowards(
@@ -22,38 +80,21 @@ public class PlatformSequence : NetworkBehaviour
             targetPos.position,
             speed * Time.deltaTime
         );
+
+        if (IsSpawned)
+            syncedPosition.Value = platform.position;
     }
 
-    /// <summary>
-    /// Called when trigger zone detects player. Synchronizes across network.
-    /// </summary>
     public void TriggerEvent()
     {
-        if (!IsSpawned)
-        {
-            Debug.LogWarning("PlatformSequence not networked yet!");
-            return;
-        }
-        
-        Debug.Log("Platform triggered!");
+        if (!IsSpawned) return;
         TriggerServerRpc();
     }
 
-    /// <summary>
-    /// Server RPC to synchronize platform trigger across all
-    /// clients via the server.
-    /// </summary>
     [ServerRpc(RequireOwnership = false)]
-    private void TriggerServerRpc(ServerRpcParams rpcParams = default)
+    private void TriggerServerRpc()
     {
-        if (!IsServer)
-        {
-            return;
-        }
-
         if (!isTriggered.Value)
-        {
             isTriggered.Value = true;
-        }
     }
 }

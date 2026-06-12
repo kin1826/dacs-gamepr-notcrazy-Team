@@ -295,6 +295,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a5f03890194e1f4c8ac6859b918901a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  transitionPanel: {fileID: 180594981}
+  topImage: {fileID: 180594979}
+  bottomImage: {fileID: 180594980}
+  transitionDuration: 0.3
+  delayBeforeOpen: 1
 --- !u!1 &137735005
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,6 +451,21 @@ GameObject:
 --- !u!1 &180594978 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3878384409139326600, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &180594979 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3909264179101907667, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &180594980 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6226156605955651407, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &180594981 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8000973113799647391, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
   m_PrefabInstance: {fileID: 180594975}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &194852890
