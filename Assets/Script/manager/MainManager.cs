@@ -13,6 +13,9 @@ public class MainManager : MonoBehaviour
 {
     public static MainManager Instance { get; private set; }
 
+    [Header("User")]
+    public TMP_Text playerNameText;
+
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject multiplayerPanel;
@@ -70,6 +73,13 @@ public class MainManager : MonoBehaviour
         rightDinoImage.gameObject.SetActive(false);
 
         AudioManager.Instance?.PlayMusic(lobbyMusicIndex);
+        RefreshPlayerName();
+    }
+
+    public void RefreshPlayerName()
+    {
+        if (playerNameText == null) return;
+        playerNameText.text = UserSession.Current != null ? UserSession.Current.name : "";
     }
 
     /// <summary>
