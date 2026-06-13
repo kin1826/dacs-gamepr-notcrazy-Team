@@ -29,7 +29,8 @@ public class AuthUIManager : MonoBehaviour
         // nên TryRestore() chạy được luôn ở đây
         if (UserSession.TryRestore())
         {
-            gameObject.SetActive(false); // đã login → ẩn panel, menu hiện ra
+            gameObject.SetActive(false);
+            MainManager.Instance?.RefreshPlayerName();
             return;
         }
 
@@ -74,7 +75,8 @@ public class AuthUIManager : MonoBehaviour
             onSuccess: res =>
             {
                 UserSession.Set(res);
-                gameObject.SetActive(false); // ẩn panel → menu hiện ra
+                MainManager.Instance?.RefreshPlayerName();
+                gameObject.SetActive(false);
             },
             onError: err =>
             {
@@ -110,6 +112,7 @@ public class AuthUIManager : MonoBehaviour
             onSuccess: res =>
             {
                 UserSession.Set(res);
+                MainManager.Instance?.RefreshPlayerName();
                 gameObject.SetActive(false);
             },
             onError: err =>
@@ -117,6 +120,15 @@ public class AuthUIManager : MonoBehaviour
                 loadingOverlay.SetActive(false);
                 registerError.text = err;
             });
+    }
+
+    // ── GUEST LOGIN ───────────────────────────────────────────────────────────
+
+    public void OnGuestLoginClick()
+    {
+        UserSession.SetGuest();
+        MainManager.Instance?.RefreshPlayerName();
+        gameObject.SetActive(false);
     }
 
     // ── GOOGLE SIGN-IN ────────────────────────────────────────────────────────
