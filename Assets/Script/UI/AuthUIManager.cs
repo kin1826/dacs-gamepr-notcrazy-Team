@@ -122,6 +122,19 @@ public class AuthUIManager : MonoBehaviour
             });
     }
 
+    // ── CLOSE PANEL ──────────────────────────────────────────────────────────
+
+    public void ClosePanel()
+    {
+        if (!UserSession.IsLoggedIn && !UserSession.IsGuest)
+        {
+            ShowLogin();
+            return;
+        }
+
+        gameObject.SetActive(false);
+    }
+
     // ── GUEST LOGIN ───────────────────────────────────────────────────────────
 
     public void OnGuestLoginClick()

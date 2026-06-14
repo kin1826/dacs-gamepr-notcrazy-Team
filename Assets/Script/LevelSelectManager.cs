@@ -16,17 +16,11 @@ public class LevelSelectManager :
 
     void Awake()
     {
-        if (Instance != null)
-        {
-            Debug.LogError("Multiple instances of LevelSelectManager!");
-            Destroy(gameObject);
-            return;
-        }
+        Instance = this;
     }
 
     void Start()
     {
-        Instance = this;
         GenerateLevels();
     }
 
