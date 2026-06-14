@@ -172,6 +172,39 @@ public class PlayerMovement : NetworkBehaviour
         if (rb == null) return;
 
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+
+        if (IsMultiplayer() && moveInput.x != 0)
+            NotifyPushBlocks();
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!HasLocalControl() || rb == null) return;
+
+        foreach (var contact in collision.contacts)
+        {
+            // normal.y > 0.5 means the contact surface is pushing us upward
+            // = we are standing on top of this collider
+            if (contact.normal.y < 0.5f) continue;
+
+            var platform = contact.collider.GetComponentInParent<TrapAction>();
+            if (platform == null || platform.LastFrameDelta == Vector2.zero) continue;
+
+            rb.position += platform.LastFrameDelta;
+            return;
+        }
+    }
+
+    private static readonly ContactPoint2D[] _contacts = new ContactPoint2D[8];
+    private void NotifyPushBlocks()
+    {
+        int count = rb.GetContacts(_contacts);
+        for (int i = 0; i < count; i++)
+        {
+            var block = _contacts[i].collider.GetComponentInParent<PushBlock>();
+            if (block != null && block.IsSpawned)
+                block.NotifyClientPushServerRpc(rb.linearVelocity.x);
+        }
     }
 
     // Called by KillZoneReload on the owning client to immediately trigger a server-side
