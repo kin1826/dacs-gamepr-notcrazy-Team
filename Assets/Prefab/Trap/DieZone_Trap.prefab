@@ -151,9 +151,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecace57ba0a67bd4c810861c615f8ad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrapTrigger
+  ShowTopMostFoldoutHeaderGroup: 1
   triggerMode: 0
   requiredCount: 1
-  triggerOnlyOnce: 1
+  triggerOnlyOnce: 0
   actions:
   - {fileID: 8653614765907472300}
 --- !u!1 &4249106854769135769
@@ -168,7 +169,6 @@ GameObject:
   - component: {fileID: 3103994701789655711}
   - component: {fileID: 2552122275199683131}
   - component: {fileID: 3734106865846739846}
-  - component: {fileID: 4564605847124677507}
   - component: {fileID: 8653614765907472300}
   m_Layer: 0
   m_Name: DieZone_Rise
@@ -309,31 +309,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de7b1b0f2b7b64489048ba2b6e33d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KillZoneReload
---- !u!114 &4564605847124677507
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4249106854769135769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &8653614765907472300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,13 +323,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrapAction
   ShowTopMostFoldoutHeaderGroup: 1
   actionType: 0
-  triggerOnlyOnce: 1
+  triggerOnlyOnce: 0
   objectToMove: {fileID: 1031220400878591459}
   target: {fileID: 3134078440780980592}
   moveSpeed: 15
-  targetObject: {fileID: 0}
+  targetObject: {fileID: 4809400907695988518}
   activeState: 1
-  targetCollider: {fileID: 0}
+  targetCollider: {fileID: 7787059202935006085}
   colliderState: 1
 --- !u!1 &4809400907695988518
 GameObject:
@@ -383,7 +358,7 @@ Transform:
   m_GameObject: {fileID: 4809400907695988518}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -2.35, z: 0}
+  m_LocalPosition: {x: -5, y: -2.39, z: 0}
   m_LocalScale: {x: 0.6, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -503,6 +478,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7774018000658622997}
+  - component: {fileID: 7451840388521990717}
   m_Layer: 0
   m_Name: DieZone_Trap
   m_TagString: Untagged
@@ -528,3 +504,28 @@ Transform:
   - {fileID: 580430985419848936}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7451840388521990717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6532402440118895656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2306655459
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0

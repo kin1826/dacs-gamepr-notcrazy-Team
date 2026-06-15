@@ -2,6 +2,7 @@
 public static class UserSession
 {
     public static AuthResponse Current { get; private set; }
+    public static bool IsGuest { get; private set; }
 
     public static bool IsLoggedIn => Current != null && !string.IsNullOrEmpty(Current.token);
 
@@ -40,10 +41,26 @@ public static class UserSession
         return true;
     }
 
+    // Gọi khi chơi chế độ khách — chỉ set RAM, không lưu disk
+    public static void SetGuest()
+    {
+        IsGuest = true;
+        Current = new AuthResponse
+        {
+            id           = 0,
+            email        = "",
+            name         = "Khách",
+            token        = "",
+            highestLevel = 1
+        };
+        GameData.SelectedLevel = 1;
+    }
+
     // Gọi khi logout
     public static void Clear()
     {
         Current = null;
+        IsGuest = false;
         SaveManager.Data.savedUserId  = 0;
         SaveManager.Data.savedEmail   = "";
         SaveManager.Data.savedName    = "";
