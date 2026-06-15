@@ -19,9 +19,7 @@ public class PushBlock : NetworkBehaviour
 
     private Rigidbody2D rb;
     private float startY;
-    private int   playerContacts;
-    private float clientPushVelocityX;
-    private float clientPushTimeout;
+    private int playerContacts;
 
     private void Awake()
     {
@@ -83,17 +81,9 @@ public class PushBlock : NetworkBehaviour
         if (IsSpawned && !IsServer) return;
 
         Vector2 velocity = rb.linearVelocity;
-
-        // Cộng thêm lực đẩy từ client (tự hết sau vài frame nếu client dừng gửi)
-        if (clientPushTimeout > 0f)
-        {
-            clientPushTimeout -= Time.fixedDeltaTime;
-            velocity.x += clientPushVelocityX;
-        }
-
         velocity.x = Mathf.Clamp(velocity.x, -maxHorizontalSpeed, maxHorizontalSpeed);
 
-        if (stopWhenNotPushed && playerContacts == 0 && clientPushTimeout <= 0f)
+        if (stopWhenNotPushed && playerContacts == 0)
             velocity.x = 0f;
 
         rb.linearVelocity = velocity;
@@ -121,14 +111,6 @@ public class PushBlock : NetworkBehaviour
         if (IsSpawned && !IsServer) return;
         if (IsPlayer(collision.collider))
             playerContacts = Mathf.Max(0, playerContacts - 1);
-    }
-
-    // Gọi từ PlayerMovement (client) mỗi FixedUpdate khi đang tiếp xúc block
-    [ServerRpc(RequireOwnership = false)]
-    public void NotifyClientPushServerRpc(float velocityX)
-    {
-        clientPushVelocityX = Mathf.Clamp(velocityX, -maxHorizontalSpeed, maxHorizontalSpeed);
-        clientPushTimeout   = Time.fixedDeltaTime * 3f; // tự reset sau 3 physics frame
     }
 
     private bool IsPlayer(Collider2D other)
