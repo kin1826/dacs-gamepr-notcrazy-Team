@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "dacs-gamepr-notcrazy-Team.slnx"
+    "dotnet.defaultSolution": "notcrazy.slnx"
 }

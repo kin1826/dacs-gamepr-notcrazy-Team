@@ -2049,6 +2049,28 @@ MonoBehaviour:
   transitionPanel: {fileID: 7904550188981779674}
   topImage: {fileID: 7904550188981779672}
   bottomImage: {fileID: 7904550188981779673}
+--- !u!1 &1498184745 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9571090321327385, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+  m_PrefabInstance: {fileID: 464065484263126002}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1498184746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498184745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecace57ba0a67bd4c810861c615f8ad0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapTrigger
+  triggerMode: 0
+  requiredCount: 1
+  triggerOnlyOnce: 1
+  actions:
+  - {fileID: 464065484263126009}
 --- !u!4 &1569358858 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5459721356085506892, guid: bb354356a740deb4787288a5b90bc865, type: 3}
@@ -2253,8 +2275,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 8897425782438733037, guid: bb354356a740deb4787288a5b90bc865, type: 3}
     - {fileID: 6890764408839472494, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-    m_RemovedGameObjects:
-    - {fileID: 8336569060949934599, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6117487135420275666, guid: bb354356a740deb4787288a5b90bc865, type: 3}
@@ -2262,7 +2283,13 @@ PrefabInstance:
       addedObject: {fileID: 464065484263126004}
     - targetCorrespondingSourceObject: {fileID: 2602270820607444250, guid: bb354356a740deb4787288a5b90bc865, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 464065484263126009}
+    - targetCorrespondingSourceObject: {fileID: 2602270820607444250, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 464065484263126008}
+    - targetCorrespondingSourceObject: {fileID: 9571090321327385, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1498184746}
   m_SourcePrefab: {fileID: 100100000, guid: bb354356a740deb4787288a5b90bc865, type: 3}
 --- !u!1 &464065484263126003 stripped
 GameObject:
@@ -2294,6 +2321,16 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!4 &464065484263126005 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9139868804920872456, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+  m_PrefabInstance: {fileID: 464065484263126002}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &464065484263126006 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3780325129787817218, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+  m_PrefabInstance: {fileID: 464065484263126002}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &464065484263126007 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2602270820607444250, guid: bb354356a740deb4787288a5b90bc865, type: 3}
@@ -2324,6 +2361,28 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &464065484263126009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464065484263126007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d976a561c64457e46b35792904ea819b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapAction
+  ShowTopMostFoldoutHeaderGroup: 1
+  actionType: 0
+  triggerOnlyOnce: 0
+  objectToMove: {fileID: 464065484263126006}
+  target: {fileID: 464065484263126005}
+  moveSpeed: 8
+  targetObject: {fileID: 0}
+  activeState: 1
+  targetCollider: {fileID: 0}
+  colliderState: 1
 --- !u!1001 &3789464533625862187
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2397,10 +2456,6 @@ PrefabInstance:
     - target: {fileID: 567092375281151614, guid: 5a958ebfe31d0fc4b83c92e6fe59e836, type: 3}
       propertyPath: m_Name
       value: __Door__
-      objectReference: {fileID: 0}
-    - target: {fileID: 2927207506600053558, guid: 5a958ebfe31d0fc4b83c92e6fe59e836, type: 3}
-      propertyPath: nextSceneName
-      value: Level_03
       objectReference: {fileID: 0}
     - target: {fileID: 5667876503461560799, guid: 5a958ebfe31d0fc4b83c92e6fe59e836, type: 3}
       propertyPath: GlobalObjectIdHash

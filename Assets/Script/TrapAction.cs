@@ -42,22 +42,16 @@ public class TrapAction : NetworkBehaviour
     private bool localMovingToStart;
     private Vector3 startPosition;
 
+    // Client-side smoothing: store latest server position as target, move toward it each frame.
+    // This prevents the 30Hz teleport jitter caused by instant NetworkVariable application.
     private Vector3 clientTargetPosition;
-
-    // Track position ourselves so we don't depend on Transform readback after assignment.
-    private Vector3 physicsCurrentPosition;
-
-    // Exposed so PlayerMovement can read how much the platform moved this frame
-    // and add that delta to the player's own position (carry-on-platform logic).
-    public Vector2 LastFrameDelta { get; private set; }
 
     private void Awake()
     {
         if (objectToMove == null)
             objectToMove = transform;
 
-        startPosition          = objectToMove.position;
-        physicsCurrentPosition = startPosition;
+        startPosition = objectToMove.position;
     }
 
     public override void OnNetworkSpawn()
@@ -70,7 +64,10 @@ public class TrapAction : NetworkBehaviour
         }
         else
         {
-            clientTargetPosition  = startPosition;
+            // Use scene-baked startPosition directly — do NOT trust syncedPosition.Value
+            // here because NGO may not have sent the server's initial value yet (it arrives
+            // on the next tick). Using Value risks a 1-frame flash at Vector3.zero.
+            clientTargetPosition = startPosition;
             objectToMove.position = startPosition;
         }
     }
@@ -83,69 +80,33 @@ public class TrapAction : NetworkBehaviour
     private void OnSyncedPositionChanged(Vector3 _, Vector3 newPos)
     {
         if (IsServer) return;
+        // Store as target for smooth interpolation — do NOT set position directly here.
         clientTargetPosition = newPos;
     }
 
     private void Update()
     {
-        // Client: visually interpolate toward server position.
-        // LastFrameDelta is published so PlayerMovement can carry the local player.
         if (IsSpawned && !IsServer)
         {
-            Vector3 prev = objectToMove.position;
+            // Client: smoothly track server's reported position.
+            // Using the same moveSpeed means client mirrors server movement exactly,
+            // with a natural catch-up if network causes brief divergence.
             objectToMove.position = Vector3.MoveTowards(
                 objectToMove.position,
                 clientTargetPosition,
                 moveSpeed * Time.deltaTime
             );
-            LastFrameDelta = (Vector2)(objectToMove.position - prev);
+            return;
         }
-    }
 
-    private void FixedUpdate()
-    {
-        // Server / single-player: authoritative movement.
-        if (IsSpawned && !IsServer) return;
-
+        // Server: authoritative movement.
         bool movingToTarget = IsSpawned ? isMovingToTarget.Value : localMovingToTarget;
         bool movingToStart  = IsSpawned ? isMovingToStart.Value  : localMovingToStart;
 
         if (movingToTarget)
-            MovePlatform(target != null ? target.position : startPosition);
+            MoveTowards(target != null ? target.position : startPosition);
         else if (movingToStart)
-            MovePlatform(startPosition);
-    }
-
-    private void MovePlatform(Vector3 destination)
-    {
-        if (objectToMove == null) return;
-
-        Vector3 prev = physicsCurrentPosition;
-        physicsCurrentPosition = Vector3.MoveTowards(
-            physicsCurrentPosition,
-            destination,
-            moveSpeed * Time.fixedDeltaTime
-        );
-
-        objectToMove.position = physicsCurrentPosition;
-
-        if (IsSpawned)
-            syncedPosition.Value = physicsCurrentPosition;
-
-        // Publish delta so PlayerMovement.OnCollisionStay2D can carry the player.
-        LastFrameDelta = (Vector2)(physicsCurrentPosition - prev);
-
-        if (Vector3.Distance(physicsCurrentPosition, destination) < 0.01f)
-        {
-            physicsCurrentPosition = destination;
-            bool wasMovingToStart  = IsSpawned ? isMovingToStart.Value  : localMovingToStart;
-            bool wasMovingToTarget = IsSpawned ? isMovingToTarget.Value : localMovingToTarget;
-
-            if (destination == startPosition)
-                SetMoving(false, wasMovingToTarget);
-            else
-                SetMoving(wasMovingToStart, false);
-        }
+            MoveTowards(startPosition);
     }
 
     public void RequestActivate()
@@ -199,6 +160,31 @@ public class TrapAction : NetworkBehaviour
             case ActionType.MoveBackToStart:    SetMoving(false, true); break;
             case ActionType.SetObjectActive:    SetObjectActiveNetwork(!activeState); break;
             case ActionType.SetColliderEnabled: SetColliderEnabledNetwork(!colliderState); break;
+        }
+    }
+
+    private void MoveTowards(Vector3 destination)
+    {
+        if (objectToMove == null) return;
+
+        objectToMove.position = Vector3.MoveTowards(
+            objectToMove.position,
+            destination,
+            moveSpeed * Time.deltaTime
+        );
+
+        if (IsSpawned)
+            syncedPosition.Value = objectToMove.position;
+
+        if (Vector3.Distance(objectToMove.position, destination) < 0.01f)
+        {
+            bool wasMovingToStart  = IsSpawned ? isMovingToStart.Value  : localMovingToStart;
+            bool wasMovingToTarget = IsSpawned ? isMovingToTarget.Value : localMovingToTarget;
+
+            if (destination == startPosition)
+                SetMoving(false, wasMovingToTarget);
+            else
+                SetMoving(wasMovingToStart, false);
         }
     }
 
