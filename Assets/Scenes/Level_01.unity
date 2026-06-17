@@ -2049,28 +2049,6 @@ MonoBehaviour:
   transitionPanel: {fileID: 7904550188981779674}
   topImage: {fileID: 7904550188981779672}
   bottomImage: {fileID: 7904550188981779673}
---- !u!1 &1498184745 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9571090321327385, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-  m_PrefabInstance: {fileID: 464065484263126002}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1498184746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1498184745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecace57ba0a67bd4c810861c615f8ad0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TrapTrigger
-  triggerMode: 0
-  requiredCount: 1
-  triggerOnlyOnce: 1
-  actions:
-  - {fileID: 464065484263126009}
 --- !u!4 &1569358858 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5459721356085506892, guid: bb354356a740deb4787288a5b90bc865, type: 3}
@@ -2272,55 +2250,29 @@ PrefabInstance:
       propertyPath: sequence
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7846020405718265431, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3553755821
+      objectReference: {fileID: 0}
+    - target: {fileID: 7846020405718265431, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 246718320
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8897425782438733037, guid: bb354356a740deb4787288a5b90bc865, type: 3}
     - {fileID: 6890764408839472494, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-    m_RemovedGameObjects: []
+    - {fileID: 7846020405718265431, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 8336569060949934599, guid: bb354356a740deb4787288a5b90bc865, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6117487135420275666, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 464065484263126004}
+    - targetCorrespondingSourceObject: {fileID: 2602270820607444250, guid: bb354356a740deb4787288a5b90bc865, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 464065484263126008}
     - targetCorrespondingSourceObject: {fileID: 2602270820607444250, guid: bb354356a740deb4787288a5b90bc865, type: 3}
       insertIndex: -1
       addedObject: {fileID: 464065484263126009}
-    - targetCorrespondingSourceObject: {fileID: 2602270820607444250, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 464065484263126008}
-    - targetCorrespondingSourceObject: {fileID: 9571090321327385, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1498184746}
   m_SourcePrefab: {fileID: 100100000, guid: bb354356a740deb4787288a5b90bc865, type: 3}
---- !u!1 &464065484263126003 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6117487135420275666, guid: bb354356a740deb4787288a5b90bc865, type: 3}
-  m_PrefabInstance: {fileID: 464065484263126002}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &464065484263126004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464065484263126003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4036952537
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!4 &464065484263126005 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9139868804920872456, guid: bb354356a740deb4787288a5b90bc865, type: 3}
@@ -2368,7 +2320,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 464065484263126007}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d976a561c64457e46b35792904ea819b, type: 3}
   m_Name: 
