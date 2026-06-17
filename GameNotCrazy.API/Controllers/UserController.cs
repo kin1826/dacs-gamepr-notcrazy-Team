@@ -34,7 +34,35 @@ public class UserController(AppDbContext context) : ControllerBase
             Email        = user.Email,
             Name         = user.Name,
             HighestLevel = user.HighestLevel,
-            Token        = string.Empty  // không cấp token mới khi update progress
+            Gold         = user.Gold,
+            Token        = string.Empty
+        });
+    }
+
+    // POST /api/user/update-gold
+    [HttpPost("update-gold")]
+    public IActionResult UpdateGold([FromBody] UpdateGoldRequest request)
+    {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdStr, out long userId))
+            return Unauthorized();
+
+        var user = context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null)
+            return NotFound("User not found.");
+
+        user.Gold      = Math.Max(0, user.Gold + request.Delta);
+        user.UpdatedAt = DateTime.UtcNow;
+        context.SaveChanges();
+
+        return Ok(new AuthResponse
+        {
+            Id           = user.Id,
+            Email        = user.Email,
+            Name         = user.Name,
+            HighestLevel = user.HighestLevel,
+            Gold         = user.Gold,
+            Token        = string.Empty
         });
     }
 }

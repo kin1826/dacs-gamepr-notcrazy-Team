@@ -20,6 +20,9 @@ public class User
     [Column("highest_level")]
     public int HighestLevel { get; set; } = 1;
 
+    [Column("gold")]
+    public int Gold { get; set; } = 0;
+
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
 

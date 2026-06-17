@@ -28,3 +28,6 @@ Thumbs.db
 *.apk
 *.aab
 *.unitypackage
+
+# Secrets — không commit file này lên git
+GameNotCrazy.API/appsettings.Development.json

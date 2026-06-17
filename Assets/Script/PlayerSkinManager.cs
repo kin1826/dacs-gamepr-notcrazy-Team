@@ -144,18 +144,20 @@ public class PlayerSkinManager : NetworkBehaviour
         skinIndex.Value = index;
     }
 
+    private void OnDestroy()
+    {
+        if (LocalPlayer == this)
+            LocalPlayer = null;
+    }
+
     public override void OnNetworkDespawn()
     {
         if (LocalPlayer == this)
-        {
             LocalPlayer = null;
-        }
 
-        // Cleanup
         if (skinIndex != null)
-        {
             skinIndex.OnValueChanged -= OnSkinChanged;
-        }
+
         base.OnNetworkDespawn();
     }
 }
