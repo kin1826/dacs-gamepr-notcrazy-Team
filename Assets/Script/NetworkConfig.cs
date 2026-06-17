@@ -107,7 +107,24 @@ public class NetworkConfig : MonoBehaviour
             }
         }
 
+        if (scene.name == "Menu")
+            ResetForMenu();
+
         SpawnSinglePlayerIfNeeded(scene);
+    }
+
+    private void ResetForMenu()
+    {
+        Time.timeScale = 1f;
+
+        GameData.IsMultiplayer = false;
+        GameData.IsHost        = false;
+
+        singlePlayerInstance = null;
+
+        NetworkManager nm = GetComponent<NetworkManager>();
+        if (nm != null && nm.IsListening)
+            nm.Shutdown();
     }
 
     private void SpawnSinglePlayerIfNeeded(Scene scene)

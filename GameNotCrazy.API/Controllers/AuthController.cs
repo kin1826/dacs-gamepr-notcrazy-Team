@@ -109,6 +109,7 @@ public class AuthController(
         Email        = user.Email,
         Name         = user.Name,
         HighestLevel = user.HighestLevel,
+        Gold         = user.Gold,
         Token        = tokenService.GenerateToken(user)
     };
 }

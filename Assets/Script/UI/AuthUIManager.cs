@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 // Gắn trực tiếp lên GameObject LoginPanel trong Canvas của Menu scene.
@@ -8,6 +9,7 @@ public class AuthUIManager : MonoBehaviour
     [Header("Sub-panels")]
     public GameObject loginSubPanel;
     public GameObject registerSubPanel;
+    public GameObject profileSubPanel;
     public GameObject loadingOverlay;
 
     [Header("Login")]
@@ -21,15 +23,17 @@ public class AuthUIManager : MonoBehaviour
     public TMP_InputField registerPassword;
     public TMP_Text       registerError;
 
+    [Header("Profile")]
+    public TMP_Text profileName;
+    public TMP_Text profileEmail;
+
     // ── LIFECYCLE ─────────────────────────────────────────────────────────────
 
     private void Start()
     {
-        // SaveManager.Load() đã được gọi trong MainManager.Awake()
-        // nên TryRestore() chạy được luôn ở đây
-        if (UserSession.TryRestore())
+        if (UserSession.IsGuest || UserSession.TryRestore())
         {
-            gameObject.SetActive(false);
+            ClosePanel();
             MainManager.Instance?.RefreshPlayerName();
             return;
         }
@@ -41,18 +45,32 @@ public class AuthUIManager : MonoBehaviour
 
     public void ShowLogin()
     {
-        loginSubPanel.SetActive(true);
-        registerSubPanel.SetActive(false);
-        loadingOverlay.SetActive(false);
+        SetPanel(loginSubPanel);
         loginError.text = "";
     }
 
     public void ShowRegister()
     {
-        loginSubPanel.SetActive(false);
-        registerSubPanel.SetActive(true);
-        loadingOverlay.SetActive(false);
+        SetPanel(registerSubPanel);
         registerError.text = "";
+    }
+
+    public void ShowProfile()
+    {
+        var user = UserSession.Current;
+        if (user == null) return;
+
+        profileName.text  = user.name;
+        profileEmail.text = UserSession.IsGuest ? "Chế độ khách" : user.email;
+        SetPanel(profileSubPanel);
+    }
+
+    public void SetPanel(GameObject active)
+    {
+        loginSubPanel.SetActive(loginSubPanel == active);
+        registerSubPanel.SetActive(registerSubPanel == active);
+        profileSubPanel.SetActive(profileSubPanel == active);
+        loadingOverlay.SetActive(false);
     }
 
     // ── LOGIN ─────────────────────────────────────────────────────────────────
@@ -76,7 +94,7 @@ public class AuthUIManager : MonoBehaviour
             {
                 UserSession.Set(res);
                 MainManager.Instance?.RefreshPlayerName();
-                gameObject.SetActive(false);
+                ClosePanel();
             },
             onError: err =>
             {
@@ -113,7 +131,7 @@ public class AuthUIManager : MonoBehaviour
             {
                 UserSession.Set(res);
                 MainManager.Instance?.RefreshPlayerName();
-                gameObject.SetActive(false);
+                ClosePanel();
             },
             onError: err =>
             {
@@ -132,7 +150,18 @@ public class AuthUIManager : MonoBehaviour
             return;
         }
 
-        gameObject.SetActive(false);
+        loginSubPanel.SetActive(false);
+        registerSubPanel.SetActive(false);
+        profileSubPanel.SetActive(false);
+        loadingOverlay.SetActive(false);
+    }
+
+    // ── LOGOUT ────────────────────────────────────────────────────────────────
+
+    public void OnLogoutClick()
+    {
+        UserSession.Clear();
+        ShowLogin();
     }
 
     // ── GUEST LOGIN ───────────────────────────────────────────────────────────
@@ -141,7 +170,7 @@ public class AuthUIManager : MonoBehaviour
     {
         UserSession.SetGuest();
         MainManager.Instance?.RefreshPlayerName();
-        gameObject.SetActive(false);
+        ClosePanel();
     }
 
     // ── GOOGLE SIGN-IN ────────────────────────────────────────────────────────
@@ -192,7 +221,7 @@ public class AuthUIManager : MonoBehaviour
             onSuccess: res =>
             {
                 UserSession.Set(res);
-                gameObject.SetActive(false);
+                ClosePanel();
             },
             onError: err =>
             {

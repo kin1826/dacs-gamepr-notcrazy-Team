@@ -6,5 +6,6 @@ public class AuthResponse
     public string Email        { get; set; } = null!;
     public string Name         { get; set; } = null!;
     public int    HighestLevel { get; set; }
+    public int    Gold         { get; set; }
     public string Token        { get; set; } = null!;
 }
