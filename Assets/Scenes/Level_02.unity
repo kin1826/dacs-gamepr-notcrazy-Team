@@ -492,8 +492,6 @@ MonoBehaviour:
   transitionPanel: {fileID: 1222164100}
   topImage: {fileID: 1222164098}
   bottomImage: {fileID: 1222164099}
-  transitionDuration: 0.3
-  delayBeforeOpen: 1
 --- !u!4 &661244864 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
@@ -2606,6 +2604,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2810999814
       objectReference: {fileID: 0}
+    - target: {fileID: 7825092762115947803, guid: 5a958ebfe31d0fc4b83c92e6fe59e836, type: 3}
+      propertyPath: nextSceneName
+      value: Level_03
+      objectReference: {fileID: 0}
     - target: {fileID: 8836524835764403596, guid: 5a958ebfe31d0fc4b83c92e6fe59e836, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
@@ -2806,9 +2808,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5717633479337013868, guid: 17d18a370350fa443bba7320676079d6, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 4744269711234382923, guid: 17d18a370350fa443bba7320676079d6, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3584611791
       objectReference: {fileID: 0}
     - target: {fileID: 6989666014518742460, guid: 17d18a370350fa443bba7320676079d6, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -2817,6 +2819,10 @@ PrefabInstance:
     - target: {fileID: 7690238726795763377, guid: 17d18a370350fa443bba7320676079d6, type: 3}
       propertyPath: m_Name
       value: Button_Move_Platform_Trap
+      objectReference: {fileID: 0}
+    - target: {fileID: 8501016811136204801, guid: 17d18a370350fa443bba7320676079d6, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4232421809
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

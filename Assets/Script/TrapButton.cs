@@ -69,16 +69,18 @@ public class TrapButton : NetworkBehaviour
             return;
         }
 
-        if (!CanRunTrapLogic())
-        {
-            return;
-        }
-
         activatorsHolding.Add(activatorId);
 
-        if (IsMultiplayer() && !IsServer && IsSpawned)
+        if (IsMultiplayer() && IsSpawned)
         {
-            PressServerRpc();
+            if (!IsServer)
+            {
+                PressServerRpc();
+            }
+            else
+            {
+                Press();
+            }
             return;
         }
 
@@ -92,23 +94,27 @@ public class TrapButton : NetworkBehaviour
             return;
         }
 
-        if (!CanRunTrapLogic())
+        activatorsHolding.Remove(activatorId);
+
+        if (GetEffectiveMode() != ButtonMode.Hold || activatorsHolding.Count != 0)
         {
             return;
         }
 
-        activatorsHolding.Remove(activatorId);
-
-        if (GetEffectiveMode() == ButtonMode.Hold && activatorsHolding.Count == 0)
+        if (IsMultiplayer() && IsSpawned)
         {
-            if (IsMultiplayer() && !IsServer && IsSpawned)
+            if (!IsServer)
             {
                 DeactivateServerRpc();
-                return;
             }
-
-            DeactivateActions();
+            else
+            {
+                DeactivateActions();
+            }
+            return;
         }
+
+        DeactivateActions();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -135,6 +141,8 @@ public class TrapButton : NetworkBehaviour
 
     private void Press()
     {
+        if (IsMultiplayer() && !IsServer) return;
+
         switch (GetEffectiveMode())
         {
             case ButtonMode.PressOnce:
@@ -202,6 +210,8 @@ public class TrapButton : NetworkBehaviour
 
     private void DeactivateActions()
     {
+        if (IsMultiplayer() && !IsServer) return;
+
         if (GetEffectiveMode() != ButtonMode.Toggle)
         {
             isPressed.Value = false;
@@ -214,16 +224,6 @@ public class TrapButton : NetworkBehaviour
                 action.RequestDeactivate();
             }
         }
-    }
-
-    private bool CanRunTrapLogic()
-    {
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsConnectedClient)
-        {
-            return NetworkManager.Singleton.IsServer;
-        }
-
-        return true;
     }
 
     private bool TryGetActivatorId(Collider2D collision, out int activatorId)
