@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY GameNotCrazy.API/ .
-RUN dotnet publish GameNotCrazy.API.csproj -c Release -o /publish
+COPY GameNotCrazy.API/ ./GameNotCrazy.API/
+RUN dotnet publish GameNotCrazy.API/GameNotCrazy.API.csproj -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
