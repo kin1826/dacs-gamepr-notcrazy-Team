@@ -10,6 +10,7 @@ UserSettings/
 # Visual Studio / Rider
 .vs/
 *.csproj
+!GameNotCrazy.API/GameNotCrazy.API.csproj
 *.unityproj
 *.sln
 *.suo
