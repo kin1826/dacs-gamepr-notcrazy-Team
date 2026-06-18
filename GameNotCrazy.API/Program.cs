@@ -78,9 +78,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Railway handles HTTPS at proxy level — không dùng redirect nội bộ
 app.UseAuthentication();   // phải trước UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5009";
+app.Run($"http://0.0.0.0:{port}");

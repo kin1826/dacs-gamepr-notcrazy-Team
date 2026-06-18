@@ -8,7 +8,7 @@ public class ApiManager : MonoBehaviour
 {
     public static ApiManager Instance { get; private set; }
 
-    private const string BaseUrl = "http://localhost:5009";
+    private const string BaseUrl = "https://dacs-gamepr-notcrazy-team-production.up.railway.app";
 
     private void Awake()
     {
