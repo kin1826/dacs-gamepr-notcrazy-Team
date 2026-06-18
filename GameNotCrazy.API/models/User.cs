@@ -23,6 +23,9 @@ public class User
     [Column("gold")]
     public int Gold { get; set; } = 0;
 
+    [Column("is_no_ads")]
+    public bool IsNoAds { get; set; } = false;
+
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
 
