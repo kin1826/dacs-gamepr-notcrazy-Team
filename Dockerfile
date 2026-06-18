@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY GameNotCrazy.API/ ./GameNotCrazy.API/
+COPY . .
+RUN find . -name "*.csproj" | head -5
 RUN dotnet publish GameNotCrazy.API/GameNotCrazy.API.csproj -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
