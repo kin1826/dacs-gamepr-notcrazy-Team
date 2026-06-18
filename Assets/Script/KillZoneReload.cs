@@ -27,10 +27,16 @@ public class KillZoneReload : MonoBehaviour
 
             if (NetworkManager.Singleton.IsServer)
             {
-                // Server detected a player in kill zone → reload immediately.
                 reloadRequested = true;
-                NetworkManager.Singleton.SceneManager.LoadScene(
-                    SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+                CameraShake.Instance?.Shake();
+                // Only freeze if this is the host's OWN player.
+                // Remote clients freeze their own player locally (client path below).
+                // Freezing a non-owner copy here leaves it invisible after reload because
+                // PlayerSpawner.OnSceneLoaded only re-enables renderers for IsOwner.
+                if (netObj.IsOwner)
+                    FreezePlayer(netObj);
+                ulong dyingClientId = netObj.OwnerClientId;
+                RespawnSync.Instance?.TriggerShowPanel(dyingClientId);
             }
             else if (netObj.IsOwner)
             {
@@ -52,10 +58,26 @@ public class KillZoneReload : MonoBehaviour
         }
         else
         {
-            // Single player.
+            // Single player — freeze+hide player then show respawn panel.
+            // Destroy would break scene-reload recreation; freeze is enough.
             reloadRequested = true;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            CameraShake.Instance?.Shake();
+            FreezePlayerSingle(collision);
+            LevelManager.Instance?.ShowRespawnPanel();
         }
+    }
+
+    private static void FreezePlayerSingle(Collider2D collision)
+    {
+        GameObject root = collision.attachedRigidbody != null
+            ? collision.attachedRigidbody.gameObject
+            : collision.gameObject;
+
+        Rigidbody2D rb = root.GetComponent<Rigidbody2D>();
+        if (rb != null) { rb.linearVelocity = Vector2.zero; rb.simulated = false; }
+
+        foreach (Renderer r in root.GetComponentsInChildren<Renderer>())
+            r.enabled = false;
     }
 
     private static void FreezePlayer(NetworkObject netObj)

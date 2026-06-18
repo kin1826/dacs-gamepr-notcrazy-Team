@@ -14,6 +14,12 @@ public class LevelManager : MonoBehaviour
     private float transitionDuration = 0.3f;
     private float delayBeforeOpen = 0.2f;
 
+    [Header("Respawn Panel")]
+    public GameObject respawnPanel;
+    public GameObject tapToContinueText;
+    public GameObject waitingText;
+    public GameObject teammateDeadText;
+
     private float halfHeight;
 
     private void Awake()
@@ -28,6 +34,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1f;
         halfHeight = Screen.height / 2f;
 
         // Đặt 2 ảnh ra ngoài màn hình (trạng thái mở sẵn)
@@ -64,6 +71,58 @@ public class LevelManager : MonoBehaviour
         {
             SceneManager.LoadScene("Menu");
         }
+    }
+
+    // ── RESPAWN PANEL ─────────────────────────────────────
+
+    // Single player overload
+    public void ShowRespawnPanel() => ShowRespawnPanel(true);
+
+    // Multiplayer: iAmDead = true nếu chính mình chết, false nếu đồng đội chết
+    public void ShowRespawnPanel(bool iAmDead)
+    {
+        if (respawnPanel == null) return;
+        Time.timeScale = 0f;
+        respawnPanel.SetActive(true);
+        tapToContinueText?.SetActive(true);
+        waitingText?.SetActive(false);
+        teammateDeadText?.SetActive(!iAmDead);
+    }
+
+    public void ShowWaiting()
+    {
+        tapToContinueText?.SetActive(false);
+        waitingText?.SetActive(true);
+    }
+
+    // Called by the respawn panel button's onClick.
+    public void OnTapContinue()
+    {
+        if (GameData.IsMultiplayer
+            && NetworkManager.Singleton != null
+            && NetworkManager.Singleton.IsConnectedClient)
+        {
+            // Show waiting state — RespawnSync will reload when both players are ready.
+            ShowWaiting();
+            RespawnSync.Instance?.PlayerReadyServerRpc();
+        }
+        else
+        {
+            // Single player — unpause then reload with transition.
+            Time.timeScale = 1f;
+            respawnPanel?.SetActive(false);
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            LoadLevel(sceneName);
+        }
+    }
+
+    // Called by RespawnSync on clients just before the server reloads the scene.
+    public void PlayCloseTransitionOnly()
+    {
+        Time.timeScale = 1f;
+        respawnPanel?.SetActive(false);
+        if (transitionPanel != null && topImage != null && bottomImage != null)
+            StartCoroutine(CloseTransition());
     }
 
     // ── LOAD LEVEL ────────────────────────────────────────
