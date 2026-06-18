@@ -312,6 +312,11 @@ Transform:
   - {fileID: 1188298689}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &443135550 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7185147839820401956, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 7904550188981779671}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &712102183
 GameObject:
   m_ObjectHideFlags: 0
@@ -1727,6 +1732,77 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 367986057880093496, guid: 55909a122a9d02d42bfc285462e8bbed, type: 3}
   m_PrefabInstance: {fileID: 7943813111439417162}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &880725591
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 880725592}
+  - component: {fileID: 880725593}
+  - component: {fileID: 880725594}
+  m_Layer: 0
+  m_Name: 'RespawnSync '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &880725592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880725591}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2005988403}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &880725593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880725591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 4191015642
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &880725594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880725591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e012adc651edbd04c8f8a0fd2baba72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RespawnSync
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &1105178562
 GameObject:
   m_ObjectHideFlags: 0
@@ -2049,10 +2125,24 @@ MonoBehaviour:
   transitionPanel: {fileID: 7904550188981779674}
   topImage: {fileID: 7904550188981779672}
   bottomImage: {fileID: 7904550188981779673}
+  respawnPanel: {fileID: 1489430221}
+  tapToContinueText: {fileID: 1618937531}
+  waitingText: {fileID: 1706910372}
+  teammateDeadText: {fileID: 443135550}
+--- !u!1 &1489430221 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1992813842251668662, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 7904550188981779671}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1569358858 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5459721356085506892, guid: bb354356a740deb4787288a5b90bc865, type: 3}
   m_PrefabInstance: {fileID: 464065484263126002}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1618937531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3804306659803611488, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 7904550188981779671}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1668476890
 GameObject:
@@ -2160,6 +2250,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1706910372 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6894826841480226927, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 7904550188981779671}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2005988402
 GameObject:
   m_ObjectHideFlags: 0
@@ -2192,6 +2287,7 @@ Transform:
   - {fileID: 841394077}
   - {fileID: 1249653950}
   - {fileID: 1381649723}
+  - {fileID: 880725592}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &464065484263126002
@@ -2550,6 +2646,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2776310559871931138, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1381649724}
     - target: {fileID: 3092559407717073755, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
       propertyPath: m_Name
       value: Canvas

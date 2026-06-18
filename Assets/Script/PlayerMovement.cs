@@ -174,15 +174,14 @@ public class PlayerMovement : NetworkBehaviour
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
     }
 
-    // Called by KillZoneReload on the owning client to immediately trigger a server-side
-    // scene reload without waiting for NetworkTransform lag (~50-100ms).
+    // Called by KillZoneReload on the owning client to immediately notify the server
+    // without waiting for NetworkTransform lag (~50-100ms).
+    // Player is already frozen+hidden on the client side before this RPC is sent.
     [ServerRpc]
     public void RequestKillZoneReloadServerRpc()
     {
         if (!IsServer) return;
-        NetworkManager.Singleton.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
-            UnityEngine.SceneManagement.LoadSceneMode.Single);
+        RespawnSync.Instance?.TriggerShowPanel(OwnerClientId);
     }
 
     // Relay used by LevelComplete when it doesn't have a NetworkObject component.

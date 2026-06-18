@@ -56,10 +56,12 @@
     <Compile Include="Assets\Script\LevelCompleteDoorGroup.cs" />
     <Compile Include="Assets\Script\TriggerZone.cs" />
     <Compile Include="Assets\Script\core\GameData.cs" />
+    <Compile Include="Assets\Script\manager\RespawnSync.cs" />
     <Compile Include="Assets\Script\TrapAction.cs" />
     <Compile Include="Assets\Script\utils\MuteButton.cs" />
     <Compile Include="Assets\Script\LevelButton.cs" />
     <Compile Include="Assets\Script\TrapButton.cs" />
+    <Compile Include="Assets\Script\utils\CameraShake.cs" />
     <Compile Include="Assets\Script\utils\ButtonPressEffect.cs" />
     <Compile Include="Assets\Script\manager\AudioManager.cs" />
     <Compile Include="Assets\Script\NetworkUI.cs" />
