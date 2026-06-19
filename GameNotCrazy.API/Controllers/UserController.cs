@@ -39,6 +39,36 @@ public class UserController(AppDbContext context) : ControllerBase
         });
     }
 
+    // GET /api/user/gold
+    [HttpGet("gold")]
+    public IActionResult GetGold()
+    {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdStr, out long userId)) return Unauthorized();
+
+        var user = context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null) return NotFound();
+
+        return Ok(new { gold = user.Gold });
+    }
+
+    // POST /api/user/set-gold — ghi đè gold tuyệt đối (sync từ local lên)
+    [HttpPost("set-gold")]
+    public IActionResult SetGold([FromBody] SetGoldRequest req)
+    {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdStr, out long userId)) return Unauthorized();
+
+        var user = context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null) return NotFound();
+
+        user.Gold      = Math.Max(0, req.Gold);
+        user.UpdatedAt = DateTime.UtcNow;
+        context.SaveChanges();
+
+        return Ok(new { gold = user.Gold });
+    }
+
     // POST /api/user/update-gold
     [HttpPost("update-gold")]
     public IActionResult UpdateGold([FromBody] UpdateGoldRequest request)

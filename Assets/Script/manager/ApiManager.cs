@@ -44,7 +44,55 @@ public class ApiManager : MonoBehaviour
         => StartCoroutine(Post<CreateTopUpRequest, TopUpResponse>(
             "/api/topup/create", req, onSuccess, onError));
 
+    public void GetGold(Action<int> onSuccess, Action<string> onError = null)
+        => StartCoroutine(Get<GoldResponse>(
+            "/api/user/gold",
+            res => onSuccess?.Invoke(res.gold),
+            onError));
+
+    public void SetGold(int gold, Action onComplete = null)
+        => StartCoroutine(Post<SetGoldRequest, GoldResponse>(
+            "/api/user/set-gold",
+            new SetGoldRequest { gold = gold },
+            _ => onComplete?.Invoke(),
+            err => Debug.LogWarning($"[ApiManager] SetGold failed: {err}")));
+
+    // ── SYNC LIFECYCLE ────────────────────────────────────────────────────────
+
+    private void OnApplicationQuit()    => SyncGoldToServer();
+    private void OnApplicationPause(bool paused) { if (paused) SyncGoldToServer(); }
+
+    private void SyncGoldToServer()
+    {
+        if (!UserSession.IsLoggedIn) return;
+        SetGold(UserSession.Current.gold);
+    }
+
     // ── PRIVATE HELPER ────────────────────────────────────────────────────────
+
+    private IEnumerator Get<TRes>(
+        string endpoint,
+        Action<TRes> onSuccess, Action<string> onError)
+        where TRes : class
+    {
+        using var req = new UnityWebRequest(BaseUrl + endpoint, "GET");
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+
+        if (UserSession.IsLoggedIn)
+            req.SetRequestHeader("Authorization", $"Bearer {UserSession.Current.token}");
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+            onSuccess?.Invoke(JsonUtility.FromJson<TRes>(req.downloadHandler.text));
+        else
+        {
+            string err = req.downloadHandler.text;
+            if (string.IsNullOrEmpty(err)) err = req.error;
+            onError?.Invoke(err);
+        }
+    }
 
     private IEnumerator Post<TReq, TRes>(
         string endpoint, TReq data,

@@ -27,6 +27,14 @@ public class GoogleLoginRequest
     public string idToken;
 }
 
+// ── GOLD SYNC ─────────────────────────────────────────────────────────────────
+
+[System.Serializable]
+public class GoldResponse { public int gold; }
+
+[System.Serializable]
+public class SetGoldRequest { public int gold; }
+
 // ── TOPUP ─────────────────────────────────────────────────────────────────────
 
 [System.Serializable]
