@@ -19,6 +19,13 @@ public class LevelManager : MonoBehaviour
     public GameObject tapToContinueText;
     public GameObject waitingText;
     public GameObject teammateDeadText;
+    public GameObject skipButton;
+
+    [Header("Skip / Ads Panels")]
+    public GameObject skipChoicePanel;
+    public GameObject adsPanel;
+
+    public static int DeathCount { get; private set; }
 
     private float halfHeight;
 
@@ -36,6 +43,7 @@ public class LevelManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         halfHeight = Screen.height / 2f;
+        skipButton?.SetActive(DeathCount >= 3);
 
         // Đặt 2 ảnh ra ngoài màn hình (trạng thái mở sẵn)
         topImage.anchoredPosition = new Vector2(0, halfHeight);
@@ -87,6 +95,37 @@ public class LevelManager : MonoBehaviour
         tapToContinueText?.SetActive(true);
         waitingText?.SetActive(false);
         teammateDeadText?.SetActive(!iAmDead);
+
+        if (!GameData.IsMultiplayer)
+        {
+            DeathCount++;
+            skipButton?.SetActive(DeathCount >= 3);
+        }
+    }
+
+    public void OnSkipClicked()
+    {
+        Time.timeScale = 1f;
+        respawnPanel?.SetActive(false);
+        skipChoicePanel?.SetActive(true);
+    }
+
+    public void OnAdsFinished()
+    {
+        adsPanel?.SetActive(false);
+        ResetDeathCount();
+        string next = GetNextLevelName();
+        LoadLevel(string.IsNullOrEmpty(next) ? SceneManager.GetActiveScene().name : next);
+    }
+
+    public static void ResetDeathCount() => DeathCount = 0;
+
+    private string GetNextLevelName()
+    {
+        int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextIndex >= SceneManager.sceneCountInBuildSettings) return "";
+        return System.IO.Path.GetFileNameWithoutExtension(
+            SceneUtility.GetScenePathByBuildIndex(nextIndex));
     }
 
     public void ShowWaiting()

@@ -27,6 +27,22 @@ public class GoogleLoginRequest
     public string idToken;
 }
 
+// ── TOPUP ─────────────────────────────────────────────────────────────────────
+
+[System.Serializable]
+public class CreateTopUpRequest
+{
+    public int goldAmount;
+}
+
+[System.Serializable]
+public class TopUpResponse
+{
+    public string code;
+    public int    goldAmount;
+    public int    price;
+}
+
 // ── RESPONSE MODELS ───────────────────────────────────────────────────────────
 
 [System.Serializable]
@@ -36,5 +52,6 @@ public class AuthResponse
     public string email;
     public string name;
     public int    highestLevel;
+    public int    gold;
     public string token;
 }

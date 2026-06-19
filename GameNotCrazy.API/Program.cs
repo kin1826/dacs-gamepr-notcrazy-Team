@@ -72,6 +72,13 @@ builder.Services.AddSwaggerGen(options =>
 // ── BUILD ─────────────────────────────────────────────────────────────────────
 var app = builder.Build();
 
+// Tự động chạy migration khi khởi động
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

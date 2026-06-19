@@ -12,12 +12,12 @@ public static class UserSession
         Current = user;
         GameData.SelectedLevel = user.highestLevel;
 
-        // Lưu xuống file để auto-login lần sau
         SaveManager.Data.savedUserId       = user.id;
         SaveManager.Data.savedEmail        = user.email;
         SaveManager.Data.savedName         = user.name;
         SaveManager.Data.savedToken        = user.token;
         SaveManager.Data.savedHighestLevel = user.highestLevel;
+        SaveManager.Data.savedGold         = user.gold;
         SaveManager.Save();
     }
 
@@ -34,10 +34,21 @@ public static class UserSession
             email        = data.savedEmail,
             name         = data.savedName,
             token        = data.savedToken,
-            highestLevel = data.savedHighestLevel
+            highestLevel = data.savedHighestLevel,
+            gold         = data.savedGold
         };
 
         GameData.SelectedLevel = Current.highestLevel;
+        return true;
+    }
+
+    // Trừ gold local, lưu disk. TODO: sync lên API khi về menu.
+    public static bool SpendGold(int amount)
+    {
+        if (Current == null || Current.gold < amount) return false;
+        Current.gold -= amount;
+        SaveManager.Data.savedGold = Current.gold;
+        SaveManager.Save();
         return true;
     }
 

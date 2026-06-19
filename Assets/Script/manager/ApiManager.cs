@@ -39,6 +39,11 @@ public class ApiManager : MonoBehaviour
         => StartCoroutine(Post<UpdateProgressRequest, AuthResponse>(
             "/api/user/update-progress", req, onSuccess, onError));
 
+    public void CreateTopUp(CreateTopUpRequest req,
+        Action<TopUpResponse> onSuccess, Action<string> onError)
+        => StartCoroutine(Post<CreateTopUpRequest, TopUpResponse>(
+            "/api/topup/create", req, onSuccess, onError));
+
     // ── PRIVATE HELPER ────────────────────────────────────────────────────────
 
     private IEnumerator Post<TReq, TRes>(

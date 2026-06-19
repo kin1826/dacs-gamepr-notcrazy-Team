@@ -15,12 +15,15 @@ public class MainManager : MonoBehaviour
 
     [Header("User")]
     public TMP_Text playerNameText;
+    public TMP_Text goldText;
 
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject multiplayerPanel;
     public GameObject dinoSelectPanel;
     public GameObject levelSelectPanel;
+    public GameObject weaponPanel;
+    public GameObject giftPanel;
 
     [Header("Scene")]
     public string gameplaySceneName = "Level_01";
@@ -80,6 +83,12 @@ public class MainManager : MonoBehaviour
     {
         if (playerNameText == null) return;
         playerNameText.text = UserSession.Current != null ? UserSession.Current.name : "";
+    }
+
+    public void RefreshGold()
+    {
+        if (goldText == null) return;
+        goldText.text = UserSession.Current != null ? $"{UserSession.Current.gold}" : "0";
     }
 
     /// <summary>
@@ -505,4 +514,23 @@ public class MainManager : MonoBehaviour
             playButton.interactable = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
         }
     }
+
+    public void OpenWeaponPanel()
+    {
+        weaponPanel.SetActive(true);
+    }
+    public void CloseWeaponPanel()
+    {
+        weaponPanel.SetActive(false);
+    }
+
+    public void OpenGiftPanel()
+    {
+        giftPanel.SetActive(true);
+    }
+    public void CloseGiftPanel()
+    {
+        giftPanel.SetActive(false);
+    }
+    
 }
