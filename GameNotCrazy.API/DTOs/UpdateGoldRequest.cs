@@ -8,3 +8,9 @@ public class UpdateGoldRequest
     [Required]
     public int Delta { get; set; }
 }
+
+public class SetGoldRequest
+{
+    [Required]
+    public int Gold { get; set; }
+}
