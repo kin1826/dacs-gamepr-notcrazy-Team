@@ -38,14 +38,14 @@ public class AuthUIManager : MonoBehaviour
             MainManager.Instance?.RefreshGold();
             if (!UserSession.IsGuest)
             {
-                // Lấy gold mới nhất từ server (admin có thể đã nạp xu)
                 ApiManager.Instance?.GetGold(serverGold =>
                 {
-                    UserSession.Current.gold          = serverGold;
-                    SaveManager.Data.savedGold        = serverGold;
+                    UserSession.Current.gold   = serverGold;
+                    SaveManager.Data.savedGold = serverGold;
                     SaveManager.Save();
                     MainManager.Instance?.RefreshGold();
                 });
+                ApiManager.Instance?.StartGoldPolling();
                 DailyRewardPanel.Instance?.TryAutoShow();
             }
             return;
@@ -108,6 +108,7 @@ public class AuthUIManager : MonoBehaviour
                 UserSession.Set(res);
                 MainManager.Instance?.RefreshPlayerName();
                 MainManager.Instance?.RefreshGold();
+                ApiManager.Instance?.StartGoldPolling();
                 ClosePanel();
                 DailyRewardPanel.Instance?.TryAutoShow();
             },
@@ -147,6 +148,7 @@ public class AuthUIManager : MonoBehaviour
                 UserSession.Set(res);
                 MainManager.Instance?.RefreshPlayerName();
                 MainManager.Instance?.RefreshGold();
+                ApiManager.Instance?.StartGoldPolling();
                 ClosePanel();
                 DailyRewardPanel.Instance?.TryAutoShow();
             },

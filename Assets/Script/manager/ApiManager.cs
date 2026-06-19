@@ -50,23 +50,44 @@ public class ApiManager : MonoBehaviour
             res => onSuccess?.Invoke(res.gold),
             onError));
 
-    public void SetGold(int gold, Action onComplete = null)
-        => StartCoroutine(Post<SetGoldRequest, GoldResponse>(
-            "/api/user/set-gold",
-            new SetGoldRequest { gold = gold },
-            _ => onComplete?.Invoke(),
-            err => Debug.LogWarning($"[ApiManager] SetGold failed: {err}")));
+    private Coroutine _goldPolling;
+    private const float GoldPollInterval = 30f;
 
-    // ── SYNC LIFECYCLE ────────────────────────────────────────────────────────
-
-    private void OnApplicationQuit()    => SyncGoldToServer();
-    private void OnApplicationPause(bool paused) { if (paused) SyncGoldToServer(); }
-
-    private void SyncGoldToServer()
+    public void StartGoldPolling()
     {
-        if (!UserSession.IsLoggedIn) return;
-        SetGold(UserSession.Current.gold);
+        StopGoldPolling();
+        _goldPolling = StartCoroutine(GoldPollingLoop());
     }
+
+    public void StopGoldPolling()
+    {
+        if (_goldPolling != null) { StopCoroutine(_goldPolling); _goldPolling = null; }
+    }
+
+    private IEnumerator GoldPollingLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(GoldPollInterval);
+            if (!UserSession.IsLoggedIn) yield break;
+
+            GetGold(serverGold =>
+            {
+                if (serverGold == UserSession.Current.gold) return;
+                UserSession.Current.gold   = serverGold;
+                SaveManager.Data.savedGold = serverGold;
+                SaveManager.Save();
+                MainManager.Instance?.RefreshGold();
+            });
+        }
+    }
+
+    public void UpdateGold(int delta, Action<int> onSuccess = null, Action<string> onError = null)
+        => StartCoroutine(Post<UpdateGoldApiRequest, GoldResponse>(
+            "/api/user/update-gold",
+            new UpdateGoldApiRequest { delta = delta },
+            res => onSuccess?.Invoke(res.gold),
+            err => { Debug.LogWarning($"[ApiManager] UpdateGold failed: {err}"); onError?.Invoke(err); }));
 
     // ── PRIVATE HELPER ────────────────────────────────────────────────────────
 
