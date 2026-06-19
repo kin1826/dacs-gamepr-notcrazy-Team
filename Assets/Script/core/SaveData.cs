@@ -12,4 +12,5 @@ public class SaveData
     public string savedName     = "";
     public string savedToken    = "";
     public int    savedHighestLevel = 1;
+    public int    savedGold         = 0;
 }

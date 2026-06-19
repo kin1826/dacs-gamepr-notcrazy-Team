@@ -316,6 +316,10 @@ MonoBehaviour:
   respawnPanel: {fileID: 83715834}
   tapToContinueText: {fileID: 83715833}
   waitingText: {fileID: 83715832}
+  teammateDeadText: {fileID: 1187794469}
+  skipButton: {fileID: 1187794470}
+  skipChoicePanel: {fileID: 682402599}
+  adsPanel: {fileID: 1187794468}
 --- !u!1 &137735005
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +461,14 @@ PrefabInstance:
       propertyPath: iconSingle
       value: 
       objectReference: {fileID: 180594978}
+    - target: {fileID: 8964644100754369222, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 116159164}
+    - target: {fileID: 8964644100754369222, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnSkipClicked
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -802,6 +814,11 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!1 &682402599 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2366244232017992049, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &712102183
 GameObject:
   m_ObjectHideFlags: 0
@@ -2556,6 +2573,21 @@ Transform:
   - {fileID: 712102184}
   m_Father: {fileID: 203249774}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1187794468 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7129463443213653614, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1187794469 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7185147839820401956, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1187794470 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8562839132398761577, guid: 50eb0e604ea57124eb9a8e66cb6a8813, type: 3}
+  m_PrefabInstance: {fileID: 180594975}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1208023986
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,6 +35,9 @@ public class AuthUIManager : MonoBehaviour
         {
             ClosePanel();
             MainManager.Instance?.RefreshPlayerName();
+            MainManager.Instance?.RefreshGold();
+            if (!UserSession.IsGuest)
+                DailyRewardPanel.Instance?.TryAutoShow();
             return;
         }
 
@@ -94,7 +97,9 @@ public class AuthUIManager : MonoBehaviour
             {
                 UserSession.Set(res);
                 MainManager.Instance?.RefreshPlayerName();
+                MainManager.Instance?.RefreshGold();
                 ClosePanel();
+                DailyRewardPanel.Instance?.TryAutoShow();
             },
             onError: err =>
             {
@@ -131,7 +136,9 @@ public class AuthUIManager : MonoBehaviour
             {
                 UserSession.Set(res);
                 MainManager.Instance?.RefreshPlayerName();
+                MainManager.Instance?.RefreshGold();
                 ClosePanel();
+                DailyRewardPanel.Instance?.TryAutoShow();
             },
             onError: err =>
             {

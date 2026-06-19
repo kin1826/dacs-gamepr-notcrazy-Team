@@ -122,6 +122,8 @@ public class NetworkConfig : MonoBehaviour
 
         singlePlayerInstance = null;
 
+        LevelManager.ResetDeathCount();
+
         NetworkManager nm = GetComponent<NetworkManager>();
         if (nm != null && nm.IsListening)
             nm.Shutdown();
