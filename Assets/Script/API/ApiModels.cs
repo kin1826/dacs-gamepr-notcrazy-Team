@@ -33,7 +33,7 @@ public class GoogleLoginRequest
 public class GoldResponse { public int gold; }
 
 [System.Serializable]
-public class SetGoldRequest { public int gold; }
+public class UpdateGoldApiRequest { public int delta; }
 
 // ── TOPUP ─────────────────────────────────────────────────────────────────────
 

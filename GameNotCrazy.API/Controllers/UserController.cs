@@ -85,14 +85,6 @@ public class UserController(AppDbContext context) : ControllerBase
         user.UpdatedAt = DateTime.UtcNow;
         context.SaveChanges();
 
-        return Ok(new AuthResponse
-        {
-            Id           = user.Id,
-            Email        = user.Email,
-            Name         = user.Name,
-            HighestLevel = user.HighestLevel,
-            Gold         = user.Gold,
-            Token        = string.Empty
-        });
+        return Ok(new { gold = user.Gold });
     }
 }

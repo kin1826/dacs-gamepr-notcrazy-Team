@@ -42,13 +42,13 @@ public static class UserSession
         return true;
     }
 
-    // Trừ gold local, lưu disk. TODO: sync lên API khi về menu.
     public static bool SpendGold(int amount)
     {
         if (Current == null || Current.gold < amount) return false;
         Current.gold -= amount;
         SaveManager.Data.savedGold = Current.gold;
         SaveManager.Save();
+        ApiManager.Instance?.UpdateGold(-amount);
         return true;
     }
 

@@ -108,7 +108,14 @@ public class NetworkConfig : MonoBehaviour
         }
 
         if (scene.name == "Menu")
+        {
             ResetForMenu();
+            ApiManager.Instance?.StartGoldPolling();
+        }
+        else
+        {
+            ApiManager.Instance?.StopGoldPolling();
+        }
 
         SpawnSinglePlayerIfNeeded(scene);
     }
