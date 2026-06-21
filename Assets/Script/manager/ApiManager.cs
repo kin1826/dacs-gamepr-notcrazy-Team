@@ -45,7 +45,32 @@ public class ApiManager : MonoBehaviour
             "/api/topup/create", req, onSuccess, onError));
 
     public void GetLeaderboard(Action<LeaderboardEntry[]> onSuccess, Action<string> onError = null)
-        => StartCoroutine(GetArray<LeaderboardEntry>("/api/leaderboard", onSuccess, onError));
+        => StartCoroutine(GetLeaderboardCoroutine(onSuccess, onError));
+
+    private IEnumerator GetLeaderboardCoroutine(Action<LeaderboardEntry[]> onSuccess, Action<string> onError)
+    {
+        using var req = new UnityWebRequest(BaseUrl + "/api/leaderboard", "GET");
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+        if (UserSession.IsLoggedIn)
+            req.SetRequestHeader("Authorization", $"Bearer {UserSession.Current.token}");
+        yield return req.SendWebRequest();
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            string raw = req.downloadHandler.text;
+            Debug.Log($"[Leaderboard] raw={raw}");
+            string wrapped = $"{{\"items\":{raw}}}";
+            var wrapper = JsonUtility.FromJson<LeaderboardResponse>(wrapped);
+            onSuccess?.Invoke(wrapper?.items ?? Array.Empty<LeaderboardEntry>());
+        }
+        else
+        {
+            string err = req.downloadHandler.text;
+            if (string.IsNullOrEmpty(err)) err = req.error;
+            Debug.LogWarning($"[Leaderboard] error={err}");
+            onError?.Invoke(err);
+        }
+    }
 
     public void GetGold(Action<int> onSuccess, Action<string> onError = null)
         => StartCoroutine(Get<GoldResponse>(
