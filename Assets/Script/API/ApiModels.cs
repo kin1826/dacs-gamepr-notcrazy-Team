@@ -27,6 +27,22 @@ public class GoogleLoginRequest
     public string idToken;
 }
 
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
+
+[System.Serializable]
+public class LeaderboardEntry
+{
+    public long   id;
+    public string name;
+    public int    highestLevel;
+}
+
+[System.Serializable]
+public class LeaderboardResponse
+{
+    public LeaderboardEntry[] items;
+}
+
 // ── GOLD SYNC ─────────────────────────────────────────────────────────────────
 
 [System.Serializable]

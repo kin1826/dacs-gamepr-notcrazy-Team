@@ -24,6 +24,7 @@ public class MainManager : MonoBehaviour
     public GameObject levelSelectPanel;
     public GameObject weaponPanel;
     public GameObject giftPanel;
+    public GameObject rankingPanel;
 
     [Header("Scene")]
     public string gameplaySceneName = "Level_01";
@@ -534,4 +535,12 @@ public class MainManager : MonoBehaviour
         giftPanel.SetActive(false);
     }
     
+    public void OpenRankingPanel()
+    {
+        rankingPanel.SetActive(true);
+    }
+    public void CloseRankingPanel()
+    {
+        rankingPanel.SetActive(false);
+    }
 }

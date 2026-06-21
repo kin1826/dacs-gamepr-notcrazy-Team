@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ClickSFX : MonoBehaviour
 {
@@ -6,9 +7,10 @@ public class ClickSFX : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             AudioManager.Instance?.PlaySFX(sfxIndex);
-        }
+
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+            AudioManager.Instance?.PlaySFX(sfxIndex);
     }
 }

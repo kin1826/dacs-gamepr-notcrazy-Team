@@ -44,6 +44,9 @@ public class ApiManager : MonoBehaviour
         => StartCoroutine(Post<CreateTopUpRequest, TopUpResponse>(
             "/api/topup/create", req, onSuccess, onError));
 
+    public void GetLeaderboard(Action<LeaderboardEntry[]> onSuccess, Action<string> onError = null)
+        => StartCoroutine(GetArray<LeaderboardEntry>("/api/leaderboard", onSuccess, onError));
+
     public void GetGold(Action<int> onSuccess, Action<string> onError = null)
         => StartCoroutine(Get<GoldResponse>(
             "/api/user/gold",
@@ -90,6 +93,37 @@ public class ApiManager : MonoBehaviour
             err => { Debug.LogWarning($"[ApiManager] UpdateGold failed: {err}"); onError?.Invoke(err); }));
 
     // ── PRIVATE HELPER ────────────────────────────────────────────────────────
+
+    private IEnumerator GetArray<TItem>(
+        string endpoint,
+        Action<TItem[]> onSuccess, Action<string> onError)
+        where TItem : class
+    {
+        using var req = new UnityWebRequest(BaseUrl + endpoint, "GET");
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+
+        if (UserSession.IsLoggedIn)
+            req.SetRequestHeader("Authorization", $"Bearer {UserSession.Current.token}");
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            string wrapped = $"{{\"items\":{req.downloadHandler.text}}}";
+            var wrapper = JsonUtility.FromJson<ArrayWrapper<TItem>>(wrapped);
+            onSuccess?.Invoke(wrapper.items);
+        }
+        else
+        {
+            string err = req.downloadHandler.text;
+            if (string.IsNullOrEmpty(err)) err = req.error;
+            onError?.Invoke(err);
+        }
+    }
+
+    [System.Serializable]
+    private class ArrayWrapper<T> { public T[] items; }
 
     private IEnumerator Get<TRes>(
         string endpoint,
