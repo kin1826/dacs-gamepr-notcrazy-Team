@@ -58,13 +58,14 @@ public class DailyRewardPanel : MonoBehaviour
     {
         if (!canClaim) return;
 
-        // Cộng gold local
+        // Cộng gold local + sync lên API
         if (UserSession.Current != null)
         {
-            UserSession.Current.gold      += Rewards[currentDay - 1];
-            SaveManager.Data.savedGold     = UserSession.Current.gold;
+            int reward = Rewards[currentDay - 1];
+            UserSession.Current.gold   += reward;
+            SaveManager.Data.savedGold  = UserSession.Current.gold;
             SaveManager.Save();
-            // TODO: sync gold lên API khi về menu (delta = +Rewards[currentDay-1])
+            ApiManager.Instance?.UpdateGold(reward);
         }
 
         // Lưu streak

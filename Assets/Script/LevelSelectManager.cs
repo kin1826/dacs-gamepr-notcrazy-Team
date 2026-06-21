@@ -19,17 +19,10 @@ public class LevelSelectManager :
         Instance = this;
     }
 
-    void Start()
-    {
-        GenerateLevels();
-    }
-
     public void GenerateAgain()
     {
-        foreach(Transform child in content)
-        {
-            Destroy(child.gameObject);
-        }
+        for (int i = content.childCount - 1; i >= 0; i--)
+            DestroyImmediate(content.GetChild(i).gameObject);
 
         GenerateLevels();
     }
