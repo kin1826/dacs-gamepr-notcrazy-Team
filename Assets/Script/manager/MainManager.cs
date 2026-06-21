@@ -215,6 +215,7 @@ public class MainManager : MonoBehaviour
     public void OpenLevelSelect()
     {
         levelSelectPanel.SetActive(true);
+        LevelSelectManager.Instance?.GenerateAgain();
     }
 
     // =========================

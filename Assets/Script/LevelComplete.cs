@@ -125,12 +125,13 @@ public class LevelComplete : NetworkBehaviour
 
     public void SavePlayerDone()
     {
-        int next = GameData.SelectedLevel + 1;
+        int next = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1;
+
+        GameData.SelectedLevel = next;
 
         if(next > SaveManager.Data.highestLevel)
         {
             SaveManager.Data.highestLevel = next;
-
             SaveManager.Save();
         }
     }
