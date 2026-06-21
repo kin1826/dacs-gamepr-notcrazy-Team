@@ -150,6 +150,7 @@ Transform:
   m_Children:
   - {fileID: 661244864}
   - {fileID: 841564798}
+  - {fileID: 1899667793}
   - {fileID: 1411087529}
   m_Father: {fileID: 203249774}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2750,6 +2751,142 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2005988403}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1899667792
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3148065}
+    m_Modifications:
+    - target: {fileID: 580430985419848936, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 580430985419848936, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 580430985419848936, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.462
+      objectReference: {fileID: 0}
+    - target: {fileID: 580430985419848936, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.918
+      objectReference: {fileID: 0}
+    - target: {fileID: 1031220400878591459, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1031220400878591459, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 3134078440780980592, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 3134078440780980592, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 6532402440118895656, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_Name
+      value: DieZone_Trap (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.87
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8021145774521440178, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 196935988
+      objectReference: {fileID: 0}
+    - target: {fileID: 8653614765907472300, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      propertyPath: triggerOnlyOnce
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 8021145774521440178, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4249106854769135769, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1899667795}
+  m_SourcePrefab: {fileID: 100100000, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+--- !u!4 &1899667793 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7774018000658622997, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+  m_PrefabInstance: {fileID: 1899667792}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1899667794 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4249106854769135769, guid: ece918e7f0526414da3afdd522f37d21, type: 3}
+  m_PrefabInstance: {fileID: 1899667792}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1899667795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899667794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3923136522
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &2005988402
 GameObject:
   m_ObjectHideFlags: 0
