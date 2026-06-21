@@ -15,7 +15,7 @@ public class LeaderboardController(AppDbContext context) : ControllerBase
             .OrderByDescending(u => u.HighestLevel)
             .ThenBy(u => u.UpdatedAt)
             .Take(top)
-            .Select((u, i) => new
+            .Select(u => new
             {
                 u.Id,
                 u.Name,
