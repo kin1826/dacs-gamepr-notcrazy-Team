@@ -777,6 +777,7 @@ API online tại Railway URL
 - Thêm chế độ chơi (race, versus)
 - Push notification khi admin duyệt nạp xu
 - Xác thực admin cho API admin endpoints
+- Thêm nhóm 2 - 4 người chơi, mở rộng map
 
 ---
 
