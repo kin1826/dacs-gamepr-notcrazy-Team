@@ -43,7 +43,7 @@
     <UnityVersion>6000.3.11f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="/Users/admin/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.2/Analyzers/Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="/Users/admin/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.3.1/Analyzers/Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.SourceGenerators.dll" />
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll" />
@@ -58,6 +58,7 @@
     <Compile Include="Assets/Script/TriggerZone.cs" />
     <Compile Include="Assets/Script/core/GameData.cs" />
     <Compile Include="Assets/Script/manager/RespawnSync.cs" />
+    <Compile Include="Assets/Script/GameModeVisibility.cs" />
     <Compile Include="Assets/Script/TrapAction.cs" />
     <Compile Include="Assets/Script/utils/MuteButton.cs" />
     <Compile Include="Assets/Script/LevelButton.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Assets/Script/core/DinoSelectButton.cs" />
     <Compile Include="Assets/Script/NetworkConfig.cs" />
     <Compile Include="Assets/Script/manager/LobbyManager.cs" />
+    <Compile Include="Assets/Script/ReverseHorizontalControls.cs" />
     <Compile Include="Assets/Script/NetworkSetup.cs" />
     <Compile Include="Assets/Script/utils/ColorConfig.cs" />
     <Compile Include="Assets/Script/core/RoomData.cs" />

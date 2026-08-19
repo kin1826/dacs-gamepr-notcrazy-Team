@@ -254,7 +254,6 @@ public class MainManager : MonoBehaviour
             Debug.LogError($"Failed to create room: {ex.Message}");
         }
 
-        LobbyManager.Instance?.SetMinLevelRpc(SaveManager.Data.highestLevel);
     }
 
     // =========================
@@ -323,8 +322,6 @@ public class MainManager : MonoBehaviour
             playButton.interactable = false;
             Debug.Log($"Client selected dino: {index}");
             UpdateRoomUI();
-
-            LobbyManager.Instance?.SetMinLevelRpc(SaveManager.Data.highestLevel);
 
             LevelSelectManager.Instance?.GenerateAgain();
         }
