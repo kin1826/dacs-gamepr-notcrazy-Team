@@ -29,12 +29,6 @@ public class LevelSelectManager :
 
     void GenerateLevels()
     {
-        if (GameData.IsMultiplayer)
-        {
-            totalLevel = LobbyManager.Instance.MinLevelLobby.Value;
-            Debug.Log("Multiplayer mode: Limiting levels to " + totalLevel);
-        }
-
         for(
             int i=1;
             i<=totalLevel;

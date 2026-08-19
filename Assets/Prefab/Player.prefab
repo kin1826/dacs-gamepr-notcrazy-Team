@@ -259,6 +259,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  useNoFrictionMaterial: 1
   animator: {fileID: 7126670436393045290}
 --- !u!70 &6135180483399022809
 CapsuleCollider2D:

@@ -15,9 +15,6 @@ public class LobbyManager : NetworkBehaviour
     public NetworkVariable<int> ClientDino =
         new NetworkVariable<int>(-1);
 
-    public NetworkVariable<int> MinLevelLobby =
-        new NetworkVariable<int>(-1);
-
     private void Awake()
     {
         // Singleton pattern: prevent multiple instances
@@ -42,34 +39,4 @@ public class LobbyManager : NetworkBehaviour
         ClientDino.Value = index;
     }
 
-    [Rpc(
-        SendTo.Server,
-        InvokePermission =
-        RpcInvokePermission.Everyone
-    )]
-    public void SetMinLevelRpc(
-        int level
-    )
-    {
-        if(
-            MinLevelLobby.Value == -1
-        )
-        {
-            MinLevelLobby.Value =
-                level;
-
-            return;
-        }
-
-        MinLevelLobby.Value =
-            Mathf.Min(
-                MinLevelLobby.Value,
-                level
-            );
-    }
-
-    public int GetMinLevel()
-    {
-        return MinLevelLobby.Value;
-    }
 }

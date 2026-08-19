@@ -6,6 +6,10 @@ public class PlayerMovement : NetworkBehaviour
 {
     public static PlayerMovement LocalPlayer { get; private set; }
 
+    // Set by scene-specific gameplay modifiers. Keeping this here makes both
+    // keyboard input and the mobile movement buttons follow the same rule.
+    public static bool IsHorizontalInputInverted { get; private set; }
+
     public float moveSpeed = 8f;
     public float jumpForce = 5f;
     public float gravity = 2f;
@@ -115,7 +119,17 @@ public class PlayerMovement : NetworkBehaviour
 
     private void SetMoveInput(Vector2 input)
     {
+        if (IsHorizontalInputInverted)
+        {
+            input.x = -input.x;
+        }
+
         moveInput = input;
+    }
+
+    public static void SetHorizontalInputInverted(bool inverted)
+    {
+        IsHorizontalInputInverted = inverted;
     }
 
     private void Jump()
