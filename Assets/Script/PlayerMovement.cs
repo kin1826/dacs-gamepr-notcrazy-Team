@@ -136,6 +136,13 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (IsMultiplayer() && !IsOwner) return;
         if (rb == null) return;
+
+        if (CeilingJumpModifier.TryGetJumpVelocity(this, rb, out float ceilingJumpVelocity))
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, ceilingJumpVelocity);
+            return;
+        }
+
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
 
